@@ -3,6 +3,7 @@ package com.example.mypainting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
@@ -18,16 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
@@ -49,7 +40,7 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
     private Button back,pause,clear;
     private Button game_start;
 
-    private MyHandler myHandler=new MyHandler();
+   // private MyHandler myHandler=new MyHandler();
 
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
@@ -87,12 +78,7 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
         resultmsg = findViewById(R.id.resultmsg);
         //实例化计时器
         ch=(Chronometer)findViewById(R.id.chronometer);
-
         //ch.setFormat("%s");
-
-
-
-
 
         //PauseDialog = new MyDialog(this, R.layout.layout, new int[]{R.id.textView, R.id.button});
 
@@ -124,13 +110,13 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
         ch.setFormat("%s");
         //倒计时实现
         ch.start();
-        ch.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                ch.setText(ch.getText().toString().substring(1));
-                if (SystemClock.elapsedRealtime()-ch.getBase()>=0)ch.stop();
-            }
-        });
+//        ch.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+//            @Override
+//            public void onChronometerTick(Chronometer chronometer) {
+//                ch.setText(ch.getText().toString().substring(1));
+//                if (SystemClock.elapsedRealtime()-ch.getBase()>=0)ch.stop();
+//            }
+//        });
     }
 });
 
@@ -212,6 +198,9 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
                     public void onPositiveButtonClick(AlertDialog dialog) {
                         dialog.dismiss();
                         Log.i(TAG,"点击了确定按钮，下一步应该跳转至主菜单");
+                        //onDestroy();
+                        Intent intent=new Intent(MainActivity.this,ChooseMode.class);
+                        startActivity(intent);
                     }
 
                     @Override
@@ -233,6 +222,9 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
                     public void onPositiveButtonClick(AlertDialog dialog) {
                         dialog.dismiss();
                         Log.i(TAG,"退出游戏，下一步应该跳转至主菜单");
+                        //onDestroy();
+                        Intent intent=new Intent(MainActivity.this,ChooseMode.class);
+                        startActivity(intent);
                     }
                     @Override
                     public void onNegativeButtonClick(AlertDialog dialog) {
