@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/popwindow_toolmore_bg"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/paint_width_small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_toobar_select_bg"
+        android:scaleType="center"
+        android:src="@mipmap/toolbar_size_small" />
+
+    <ImageView
+        android:id="@+id/paint_width_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_toobar_unselect_bg"
+        android:scaleType="center"
+        android:src="@mipmap/toolbar_size_middle" />
+
+    <ImageView
+        android:id="@+id/paint_width_big"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_toobar_unselect_bg"
+        android:scaleType="center"
+        android:src="@mipmap/toolbar_size_large" />
+
+</LinearLayout>

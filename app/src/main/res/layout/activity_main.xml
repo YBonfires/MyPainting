@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <zhanglei.com.paintview.PaintView
+        android:id="@+id/paintView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/clear"
+        android:layout_width="81dp"
+        android:layout_height="37dp"
+        android:text="清空画板"
+        android:textColor="#207178"
+        app:layout_constraintBottom_toTopOf="@+id/resultmsg"
+        app:layout_constraintEnd_toStartOf="@+id/iv_undo"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="62dp"
+        android:layout_height="43dp"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="#207178"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pause" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="267dp"
+        android:layout_height="45dp"
+        android:text="关卡信息"
+        android:gravity="center"
+        android:textColor="#F58653"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+    <Button
+        android:id="@+id/back"
+        android:layout_width="71dp"
+        android:layout_height="45dp"
+        android:text="返回"
+        android:textColor="#174C4F"
+        app:layout_constraintEnd_toStartOf="@+id/title"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+    <Button
+        android:id="@+id/pause"
+        android:layout_width="71dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="4dp"
+        android:text="暂停"
+        android:textColor="#174C4F"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="60dp"
+        android:layout_height="142dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back"
+        app:layout_constraintVertical_bias="0.072">
+
+        <Button
+            android:id="@+id/btn_select_paint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="画笔"
+            android:textColor="#207178" />
+
+        <Button
+            android:id="@+id/btn_select_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="颜色"
+            android:textColor="#207178" />
+
+        <Button
+            android:id="@+id/btn_select_eraser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="橡皮"
+            android:textColor="#207178" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_undo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="5dp"
+        android:src="@mipmap/icon_undo"
+        app:layout_constraintBottom_toTopOf="@+id/resultmsg"
+        app:layout_constraintEnd_toStartOf="@+id/iv_redo" />
+
+    <ImageView
+        android:id="@+id/iv_redo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="5dp"
+        android:src="@mipmap/icon_redo"
+        app:layout_constraintBottom_toTopOf="@+id/resultmsg"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/resultmsg"
+        android:layout_width="411dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="563dp"
+        android:gravity="center_horizontal"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:text="你画的是... "
+        android:textColor="#FF612A"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+<!--    <Button-->
+<!--        android:id="@+id/game_start"-->
+<!--        android:layout_width="188dp"-->
+<!--        android:layout_height="52dp"-->
+<!--        android:layout_marginBottom="256dp"-->
+<!--        android:text="开始游戏"-->
+<!--        android:textColor="#F58653"-->
+<!--        android:textSize="20sp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/resultmsg"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.497"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/title"-->
+<!--        app:layout_constraintVertical_bias="1.0" />-->
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
