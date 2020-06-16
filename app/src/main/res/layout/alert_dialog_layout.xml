@@ -42,26 +42,26 @@
                 android:background="#F5E9BE"
                 android:gravity="center"
                 android:padding="5dp"
-                android:text="继续"
+                android:text="继续游戏"
                 android:textColor="#207178"
                 android:textSize="16sp" />
 
-            <!--            <TextView-->
-            <!--                android:layout_width="1dp"-->
-            <!--                android:layout_height="match_parent"-->
-            <!--                android:background="#F58653" />-->
+                        <TextView
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="#F58653" />
 
-            <!--            <TextView-->
-            <!--                android:id="@+id/tv_confirm_dialog"-->
-            <!--                android:layout_width="0dp"-->
-            <!--                android:layout_height="match_parent"-->
-            <!--                android:layout_weight="1"-->
-            <!--                android:background="#F5E9BE"-->
-            <!--                android:gravity="center"-->
-            <!--                android:padding="5dp"-->
-            <!--                android:text="返回菜单"-->
-            <!--                android:textColor="#207178"-->
-            <!--                android:textSize="16sp" />-->
+            <TextView
+                android:id="@+id/tv_confirm_dialog"
+                android:layout_width="293dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#F5E9BE"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="返回菜单"
+                android:textColor="#207178"
+                android:textSize="16sp" />
 
         </LinearLayout>
     </LinearLayout>

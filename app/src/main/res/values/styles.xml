@@ -1,13 +1,13 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MyDialog" parent="android:Theme.Dialog">
+    <style name="YyDialog" parent="android:Theme.Dialog">
         <!-- 背景颜色及透明程度 -->
         <item name="android:windowBackground">@android:color/transparent</item>
         <!-- 是否半透明 -->
@@ -22,6 +22,13 @@
         <item name="android:windowFrame">@null</item>
         <!-- 设置背景模糊的透明度-->
         <item name="android:backgroundDimAmount">0.7</item>
+    </style>
+
+    <style name="mydialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <!--   设置关闭自定义对话框标题    -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--   设置自定义对话框背景颜色为透明    -->
     </style>
 
 </resources>

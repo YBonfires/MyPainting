@@ -4,6 +4,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,49 +18,83 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Random;
+import java.util.concurrent.Semaphore;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import zhanglei.com.paintview.DrawTypeEnum;
 import zhanglei.com.paintview.PaintView;
 
-public class MainActivity extends AppCompatActivity implements IPaintColorListener,IPaintPenListner{
+public class MainActivity extends BaseActivity implements IPaintColorListener,IPaintPenListner{
     private static final String TAG="MainActivity";
     //定义布局元素
     private PaintView paintView;
     private ImageView ivUndo;
     private ImageView ivRedo;
     private ImageView logo;
-    private TextView title;
+    private  TextView titlemsg;
+    private  TextView resultmsg;
     private Button back,pause,clear;
-   // private Button game_start;
-    private TextView resultmsg;
+    private Button game_start;
+
+    private MyHandler myHandler=new MyHandler();
 
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
+    private Boolean msg;
+
+    private String errMsg;
+    private String topic;
 
     //dialog
-    private MyDialog PauseDialog;
+    //private MyDialog PauseDialog;
 
     //计数器 全局
     private Chronometer ch;
+
+    //初始化信号量
+    private Semaphore lock=new Semaphore(1);
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //去掉标题栏
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+       // supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         //实例化
         logo = findViewById(R.id.logo);
         paintView = findViewById(R.id.paintView);
         ivRedo = findViewById(R.id.iv_redo);
         ivUndo = findViewById(R.id.iv_undo);
-        title = findViewById(R.id.title);
-        //  game_start = findViewById(R.id.game_start);
+        //title = findViewById(R.id.title);
+        game_start=findViewById(R.id.game_start);
         back = findViewById(R.id.back);
         pause = findViewById(R.id.pause);
+        titlemsg=findViewById(R.id.title);
         resultmsg = findViewById(R.id.resultmsg);
+        //实例化计时器
+        ch=(Chronometer)findViewById(R.id.chronometer);
 
-        PauseDialog = new MyDialog(this, R.layout.layout, new int[]{R.id.textView, R.id.button});
+        //ch.setFormat("%s");
+
+
+
+
+
+        //PauseDialog = new MyDialog(this, R.layout.layout, new int[]{R.id.textView, R.id.button});
 
         selectPenWindow = new SelectPenWindow(this);
         selectPenWindow.setPaintPenListener(this);
@@ -65,13 +102,37 @@ public class MainActivity extends AppCompatActivity implements IPaintColorListen
         selectColorWindow = new SelectColorWindow(this);
         selectColorWindow.setIPaintColorListener(this);
 
-//        //开始游戏
-//         game_start.setOnClickListener(new View.OnClickListener() {
-//             @Override
-//             public void onClick(View v) {
-//
-//             }
-//         });
+
+       //开始游戏
+     game_start.setOnClickListener(new View.OnClickListener() {
+//    final OkHttpClient client = new OkHttpClient();
+//    @Override
+
+    //关卡计数器
+
+    public void onClick(View v) {
+
+        Log.i(TAG,"点击开始游戏，随机抽取题目...");
+        String[] Paints={"apple","banana","pear","111","222","333","444","555","666","777","888","999",
+                         "10","11","12","13","14","15","16","20"};
+        Random random=new Random();
+        int i=random.nextInt(19);
+        Log.i(TAG,"生成随机题目i为"+i);
+        titlemsg.setText("第x关 请画出"+Paints[i]);
+        //设置初始时间
+        ch.setBase(SystemClock.elapsedRealtime()+30);
+        ch.setFormat("%s");
+        //倒计时实现
+        ch.start();
+        ch.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                ch.setText(ch.getText().toString().substring(1));
+                if (SystemClock.elapsedRealtime()-ch.getBase()>=0)ch.stop();
+            }
+        });
+    }
+});
 
         //启动画笔功能
         paintView.setDrawType(DrawTypeEnum.PEN);
@@ -79,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements IPaintColorListen
         findViewById(R.id.btn_select_eraser).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG,"橡皮擦");
                 paintView.setDrawType(DrawTypeEnum.ERASER);
             }
         });
@@ -87,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements IPaintColorListen
         findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG,"清空面板");
                 paintView.clear();
             }
         });
@@ -95,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements IPaintColorListen
         ivUndo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG,"上一笔");
                 paintView.undo();
             }
         });
@@ -102,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements IPaintColorListen
         ivRedo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG,"下一笔");
                 paintView.redo();
             }
         });
@@ -166,12 +231,13 @@ public class MainActivity extends AppCompatActivity implements IPaintColorListen
                 utils.setOnButtonClickListener(new AlertDialogUtils.OnButtonClickListener() {
                     @Override
                     public void onPositiveButtonClick(AlertDialog dialog) {
-                        //
+                        dialog.dismiss();
+                        Log.i(TAG,"退出游戏，下一步应该跳转至主菜单");
                     }
                     @Override
                     public void onNegativeButtonClick(AlertDialog dialog) {
                         dialog.dismiss();
-                        Log.i(TAG,"取消，返回当前界面");
+                        Log.i(TAG,"继续游戏，返回当前界面");
                     }
                 });
             }
@@ -189,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements IPaintColorListen
         paintView.setRushPaintWidth(drawStrokeEnum.getEraserStroke());
     }
 
+
     //回收资源
     @Override
     protected void onDestroy() {
@@ -196,5 +263,6 @@ public class MainActivity extends AppCompatActivity implements IPaintColorListen
         if (null != paintView) {
             paintView.destroy();
         }
-    }}
+    }
+}
 

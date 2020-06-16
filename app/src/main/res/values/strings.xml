@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MyPainting</string>
+    <string name="tip">"电脑随机出题，玩家在20秒内完成绘画。若电脑猜测玩家画的与题目一致，则过关。\n"
+                        "有以下的两种游戏模式：\n"
+                        "闯关模式：玩家每完成一关可以得到相应的积分，积分可累加。\n"
+                        "练习模式：玩家自由练习，不设置积分。"</string>
 </resources>

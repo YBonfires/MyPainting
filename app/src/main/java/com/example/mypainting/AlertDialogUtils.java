@@ -28,7 +28,7 @@ public class AlertDialogUtils {
         View view = View.inflate(context, R.layout.alert_dialog_layout, null);
         TextView tvMsg = (TextView) view.findViewById(R.id.tv_message_dialog);
         TextView tvCancel = (TextView) view.findViewById(R.id.tv_cancel_dialog);
-//        TextView tvConfirm = (TextView) view.findViewById(R.id.tv_confirm_dialog);
+        TextView tvConfirm = (TextView) view.findViewById(R.id.tv_confirm_dialog);
 
         tvMsg.setText(message);
         tvCancel.setOnClickListener(new View.OnClickListener() {
@@ -37,12 +37,12 @@ public class AlertDialogUtils {
                 onButtonClickListener.onNegativeButtonClick(alertDialog);
             }
         });
-//        tvConfirm.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onButtonClickListener.onPositiveButtonClick(alertDialog);
-//            }
-//        });
+        tvConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onButtonClickListener.onPositiveButtonClick(alertDialog);
+            }
+       });
 
         alertDialog.getWindow().setContentView(view);
     }
