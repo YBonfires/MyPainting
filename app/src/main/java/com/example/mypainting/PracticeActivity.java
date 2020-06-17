@@ -58,13 +58,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
 
         selectColorWindow = new SelectColorWindow(this);
         selectColorWindow.setIPaintColorListener(this);
-        hint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HintDialog mydialog=new HintDialog(PracticeActivity.this,R.style.mydialog);
-                mydialog.show();
-            }
-        });
+
 
         game_start.setOnClickListener(new View.OnClickListener() {
 //    final OkHttpClient client = new OkHttpClient();
@@ -87,6 +81,16 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                 //倒计时实现
                 ch.start();
                 //启动画笔功能
+                hint.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        HintDialog mydialog=new HintDialog(PracticeActivity.this,R.layout.activity_hint_dialog);
+
+                        mydialog.show();
+
+                    }
+                });
+
 
             }});
                 paintView.setDrawType(DrawTypeEnum.PEN);
