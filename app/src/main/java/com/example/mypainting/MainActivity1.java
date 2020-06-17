@@ -4,31 +4,46 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity1 extends AppCompatActivity {
+    private Animation animation;
+    private ImageView imageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main1);
-        final Intent it = new Intent(this, login.class); //你要转向的Activity
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
+        imageView = findViewById(R.id.welcome);
+        animation = AnimationUtils.loadAnimation(MainActivity1.this, R.anim.logo_anim);
+        animation.setInterpolator(new AccelerateDecelerateInterpolator());
+        animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void run() {
-                startActivity(it); //执行
+            public void onAnimationStart(Animation animation) {
+
             }
-        };
-        timer.schedule(task, 1000 * 3); //10秒后*
-        // 第二种方法     /*
-        // new Handler().postDelayed(new Runnable() {
-        // @Override
-        // public void run() {
-        // Intent intent=new Intent(Main2Activity.this,MainActivity.class);
-        // startActivity(intent);
-        // finish();            }        }, 3000);*/    }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Intent intent = new Intent(MainActivity1.this, login.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        animation.setFillAfter(false);// View
+        imageView.setAnimation(animation);
+        animation.start();
+
     }
 }
