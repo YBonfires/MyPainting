@@ -22,7 +22,7 @@ public class MainActivity1 extends AppCompatActivity {
                 startActivity(it); //执行
             }
         };
-        timer.schedule(task, 1000 * 3); //10秒后*
+        timer.schedule(task, 1000 * 1); //10秒后*
         // 第二种方法     /*
         // new Handler().postDelayed(new Runnable() {
         // @Override
