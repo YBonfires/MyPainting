@@ -33,8 +33,9 @@ public class Register extends AppCompatActivity {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Register.this, login.class);
-                startActivity(intent);
+              //  Intent intent = new Intent(Register.this, login.class);
+              //  startActivity(intent);
+                finish();
             }
         });
         button.setOnClickListener(new View.OnClickListener() {
@@ -60,10 +61,13 @@ public class Register extends AppCompatActivity {
                 } else {
                     Toast.makeText(Register.this, "注册成功", Toast.LENGTH_SHORT).show();
 
-                    Intent intent=new Intent(Register.this,login.class);
+                  //  Intent intent=new Intent(Register.this,login.class);
+                    Intent intent=getIntent();
                     intent.putExtra("email",email);
                     intent.putExtra("password",password);
-                    startActivity(intent);
+                    //startActivity(intent);
+                    setResult(0x200,intent);
+                    finish();
                 }
             }
         });
