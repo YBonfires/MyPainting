@@ -75,8 +75,8 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
             public void onClick(View v) {
 
                 Log.i(TAG, "点击开始游戏，随机抽取题目...");
-                String[] Paints = {"apple", "banana", "pear", "111", "222", "333", "444", "555", "666", "777", "888", "999",
-                        "10", "11", "12", "13", "14", "15", "16", "20"};
+                String[] Paints={"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
+                        "hat", "ice cream", "leaf", "scissors", "star", "t-shirt", "pants", "lightning", "tree"};
                 Random random = new Random();
                 int i = random.nextInt(19);
                 Log.i(TAG, "生成随机题目i为" + i);
