@@ -40,7 +40,7 @@
         android:background="@drawable/editshape"
         android:ems="10"
         android:hint="密码："
-        android:inputType="textPersonName"
+        android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -53,7 +53,7 @@
         android:background="@drawable/editshape"
         android:ems="10"
         android:hint="请再次输入密码："
-        android:inputType="textPersonName"
+        android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
