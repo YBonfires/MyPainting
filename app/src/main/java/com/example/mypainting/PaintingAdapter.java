@@ -8,12 +8,10 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mypainting.gson.Painting;
-
 import java.util.List;
 
 public class PaintingAdapter extends RecyclerView.Adapter<PaintingAdapter.ViewHolder> {
-    private List<Painting> mPaintingList;
+    private List<PaintRet> mPaintingList;
   static class ViewHolder extends RecyclerView.ViewHolder{
       ImageView paintingImg;
       TextView paintingTopic;
@@ -24,7 +22,7 @@ public class PaintingAdapter extends RecyclerView.Adapter<PaintingAdapter.ViewHo
 
       }
   }
-  public PaintingAdapter(List<Painting> paintingList){
+  public PaintingAdapter(List<PaintRet> paintingList){
       mPaintingList=paintingList;
   }
   public ViewHolder onCreateViewHolder(ViewGroup parent,int ViewType){
@@ -33,9 +31,9 @@ public class PaintingAdapter extends RecyclerView.Adapter<PaintingAdapter.ViewHo
       return holder;
   }
   public void onBindViewHolder(ViewHolder holder,int position){
-      Painting painting=mPaintingList.get(position);
-      holder.paintingTopic.setText(painting.getTopic());
-      holder.paintingImg.setImageResource(painting.getPaintingId());
+      PaintRet painting=mPaintingList.get(position);
+      holder.paintingTopic.setText(painting.getCode());
+      //.paintingImg.setImageResource(painting.getMsg());
   }
   public int getItemCount(){
       return mPaintingList.size();

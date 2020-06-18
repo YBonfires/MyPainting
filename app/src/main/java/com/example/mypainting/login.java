@@ -8,12 +8,24 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.mypainting.gson.User;
+import com.google.gson.Gson;
+
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class login extends AppCompatActivity {
     private TextView textView;
@@ -24,6 +36,7 @@ public class login extends AppCompatActivity {
 
     private SharedPreferences.Editor editor;
     private CheckBox checkBox;
+    private static final String TAG = "LoginTest";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,18 +69,47 @@ public class login extends AppCompatActivity {
             public void onClick(View v) {
                 String email=editEmail.getText().toString();
                 String password=editPassword.getText().toString();
+                String  username="user";
                 if(TextUtils.isEmpty(editEmail.getText())){
                     Toast.makeText(login.this, "请输入邮箱账号", Toast.LENGTH_SHORT).show();
                 }
                 else if(TextUtils.isEmpty(editPassword.getText())){
                     Toast.makeText(login.this, "输入密码", Toast.LENGTH_SHORT).show();
                 }else {
+                    User user = new User(null, email, password, null, 0);
+                    Gson gson = new Gson();
+                    final String toJson = gson.toJson(user);//把字符串转换成json格式
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String url = "http://10.0.2.2:8080/guessServer/LoginServlet";
+                            OkHttpClient client = new OkHttpClient.Builder()//创建一个OkhttpClient实例
+                                    //.callTimeout(5, TimeUnit.SECONDS)
+                                    .connectTimeout(5, TimeUnit.SECONDS)
+                                    .readTimeout(5, TimeUnit.SECONDS)
+                                    .writeTimeout(5, TimeUnit.SECONDS)
+                                    .build();
+                            Request request = new Request.Builder()//要发起http请求，创建一个request对象
+                                   .url(url)//设置目标网络地址
+                                    .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), toJson))
+                                    .build();
+                            //把转换成json格式的数据上传
+                            try{
+                                Response response = client.newCall(request).execute();
+                                String res = response.body().string();//服务器返回的数据
+                                Log.i("TEXT", "HHHHHH");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+
                     editor=pref.edit();
                     if(checkBox.isChecked()){
                         editor.putBoolean("remember",true);
                         editor.putString("email",email);
                         editor.putString("password",password);
-                        Toast.makeText(login.this, "checked", Toast.LENGTH_SHORT).show();
                     }else{
                         editor.clear();
                     }

@@ -14,20 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Album extends AppCompatActivity {
-    private List<Painting> paintingList=new ArrayList<>();
+    private List<PaintRet> paintingList=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
-        initPaintings();
+       // initPaintings();
         RecyclerView recyclerView=findViewById(R.id.recycler_view);
         StaggeredGridLayoutManager layoutManager=new StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         PaintingAdapter adapter=new PaintingAdapter(paintingList);
         recyclerView.setAdapter(adapter);
     }
-    private void initPaintings(){
-        Painting zhu=new Painting("猪",R.drawable.zbj);
+    /*private void initPaintings(){
+        PaintRet zhu=new PaintRet("猪",R.drawable.zbj);
         paintingList.add(zhu);
         Painting hou=new Painting("猴",R.drawable.swk);
         paintingList.add(hou);
@@ -36,5 +36,6 @@ public class Album extends AppCompatActivity {
         Painting xiong=new Painting("熊",R.drawable.xiong);
         paintingList.add(xiong);
 
-    }
+    }*/
+
 }
