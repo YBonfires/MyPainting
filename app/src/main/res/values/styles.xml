@@ -30,5 +30,11 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <!--   设置自定义对话框背景颜色为透明    -->
     </style>
+    <style name="HintDialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <!--   设置关闭自定义对话框标题    -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--   设置自定义对话框背景颜色为透明    -->
+    </style>
 
 </resources>

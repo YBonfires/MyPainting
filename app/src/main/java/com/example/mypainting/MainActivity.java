@@ -38,6 +38,8 @@ import zhanglei.com.paintview.Util;
 
 public class MainActivity extends BaseActivity implements IPaintColorListener,IPaintPenListner{
     private static final String TAG="MainActivity";
+    //用户id
+
     //定义布局元素
     private PaintView paintView;
     private ImageView ivUndo;

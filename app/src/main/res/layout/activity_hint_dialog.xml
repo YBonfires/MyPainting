@@ -3,29 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".HintDialog">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="304dp"
-        android:layout_height="266dp"
+        android:layout_width="251dp"
+        android:layout_height="262dp"
         android:layout_marginBottom="232dp"
         android:src="@drawable/xiong"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView6"
-        android:layout_width="250dp"
-        android:layout_height="36dp"
-        android:text="提示"
+        android:layout_width="251dp"
+        android:layout_height="37dp"
         android:background="#F5E9BE"
+        android:gravity="center"
+        android:text="提示"
         android:textColor="#174C4F"
         android:textSize="17sp"
-        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/imageView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,11 +32,11 @@
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="246dp"
-        android:layout_height="56dp"
+        android:layout_width="255dp"
+        android:layout_height="50dp"
+        android:background="@drawable/buttonshape"
         android:text="我知道啦"
         android:textColor="#174C4F"
-        android:background="@drawable/buttonshape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
