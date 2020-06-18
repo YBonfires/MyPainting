@@ -1,18 +1,14 @@
 package com.example.mypainting;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
@@ -21,22 +17,17 @@ import android.widget.Toast;
 
 import com.example.mypainting.Util.HttpUtil;
 import com.example.mypainting.Util.PaintHelper;
+import com.example.mypainting.gson.User;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import zhanglei.com.paintview.DrawTypeEnum;
 import zhanglei.com.paintview.PaintView;
 import zhanglei.com.paintview.Util;
 
-public class MainActivity extends BaseActivity implements IPaintColorListener,IPaintPenListner{
+public class GameActivity extends BaseActivity implements IPaintColorListener,IPaintPenListner{
     private static final String TAG="MainActivity";
     //用户id
 
@@ -61,6 +52,8 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
 
     private String errMsg;
     private String topic;
+    //当前用户
+    private User this_user;
 
     //dialog
     //private MyDialog PauseDialog;
@@ -92,7 +85,6 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
         resultmsg = findViewById(R.id.resultmsg);
         //实例化计时器
         ch=(Chronometer)findViewById(R.id.chronometer);
-        //ch.setFormat("%s");
 
         //PauseDialog = new MyDialog(this, R.layout.layout, new int[]{R.id.textView, R.id.button});
 
@@ -121,13 +113,13 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
         ch.setFormat("%s");
         //倒计时实现
         ch.start();
-//        ch.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-//            @Override
-//            public void onChronometerTick(Chronometer chronometer) {
-//               ch.setText(ch.getText().toString().substring(1));
-//                if (SystemClock.elapsedRealtime()-ch.getBase()>=0)ch.stop();
-//            }
-//        });
+        ch.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                ch.setText(ch.getText().toString().substring(1));
+                if (SystemClock.elapsedRealtime()-ch.getBase()>=0)ch.stop();
+            }
+        });
     } });
 
         //点击提交按钮
@@ -139,32 +131,25 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
                 Toast toast = Toast.makeText(getApplicationContext(), "正在提交", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
-
+                ch.stop();
                 //此处应该newThread
                 Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
                 //File file=new File("/sdcard/akai/");
-                file = Util.bitmap2File(MainActivity.this, bitmap);
+                file = Util.bitmap2File(GameActivity.this, bitmap);
                 paintView.clear();
                 Log.i(TAG, "查看file路径：" + "\n"+file.getAbsolutePath() + "\n");
                 //二值化处理
                // PaintHelper.convertToBlackWhite(bitmap);
 
                 //测试二值化处理是否成功
-                textfile=Util.bitmap2File(MainActivity.this,PaintHelper.convertToBlackWhite(bitmap));
+                textfile=Util.bitmap2File(GameActivity.this,PaintHelper.convertToBlackWhite(bitmap));
                 Log.i(TAG, "查看二值化图片路径：" + "\n"+textfile.getAbsolutePath() + "\n");
 
-                //上传到服务器
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //得到response
-//                        String url = "http://10.0.2.2:8080/guessServer/RecognizeServlet";
-//                        HttpUtil.sendOkHttpRequest(url);
-//
-//                    }
-//                }).start();
+                //上传绘图到服务器
+                HttpUtil.UploadPaint(this_user,file);
+                //识别绘图
+                HttpUtil.RecognizePaint(this_user,textfile);
             }});
-
 
         //启动画笔功能
         paintView.setDrawType(DrawTypeEnum.PEN);
@@ -238,14 +223,14 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
             @Override
             public void onClick(View v) {
                 BackAlertDialog dialog=BackAlertDialog.getInstance();
-                dialog.showConfirmDialog(MainActivity.this,"现在退出不会保存记录哦\n确定退出吗?");
+                dialog.showConfirmDialog(GameActivity.this,"现在退出不会保存记录哦\n确定退出吗?");
                 dialog.setOnButtonClickListener(new BackAlertDialog.OnButtonClickListener() {
                     @Override
                     public void onPositiveButtonClick(AlertDialog dialog) {
                         dialog.dismiss();
                         Log.i(TAG,"点击了确定按钮，下一步应该跳转至主菜单");
                         //onDestroy();
-                        Intent intent=new Intent(MainActivity.this,ChooseMode.class);
+                        Intent intent=new Intent(GameActivity.this,ChooseMode.class);
                         startActivity(intent);
                     }
 
@@ -262,14 +247,14 @@ public class MainActivity extends BaseActivity implements IPaintColorListener,IP
             @Override
             public void onClick(View v) {
                 AlertDialogUtils utils=AlertDialogUtils.getInstance();
-                utils.showConfirmDialog(MainActivity.this,"游戏暂停");
+                utils.showConfirmDialog(GameActivity.this,"游戏暂停");
                 utils.setOnButtonClickListener(new AlertDialogUtils.OnButtonClickListener() {
                     @Override
                     public void onPositiveButtonClick(AlertDialog dialog) {
                         dialog.dismiss();
                         Log.i(TAG,"退出游戏，下一步应该跳转至主菜单");
                         //onDestroy();
-                        Intent intent=new Intent(MainActivity.this,ChooseMode.class);
+                        Intent intent=new Intent(GameActivity.this,ChooseMode.class);
                         startActivity(intent);
                     }
                     @Override

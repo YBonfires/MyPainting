@@ -34,8 +34,8 @@ public class PaintingAdapter extends RecyclerView.Adapter<PaintingAdapter.ViewHo
   }
   public void onBindViewHolder(ViewHolder holder,int position){
       Painting painting=mPaintingList.get(position);
-      holder.paintingTopic.setText(painting.getTopic());
-      holder.paintingImg.setImageResource(painting.getPaintingId());
+     // holder.paintingTopic.setText(painting.getTopic());
+      //holder.paintingImg.setImageResource(painting.getPaintingId());
   }
   public int getItemCount(){
       return mPaintingList.size();

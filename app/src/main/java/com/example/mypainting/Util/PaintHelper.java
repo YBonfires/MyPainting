@@ -25,12 +25,12 @@ public class PaintHelper {
         int[] oldPx = new int[width * height];
         int[] newPx = new int[width * height];
         bm.getPixels(oldPx, 0, width, 0, 0, width, height);
-        for (int j = 0; j < width * height; j++) {//循环处理图像中每个像素点的颜色值
-            color = oldPx[j];//取得某个点的像素值
-            r = Color.red(color);//取得此像素点的r(红色)分量
-            g = Color.green(color);//取得此像素点的g(绿色)分量
-            b = Color.blue(color);//取得此像素点的b(蓝色分量)
-            a = Color.alpha(color);//取得此像素点的a通道值
+        for (int j = 0; j < width * height; j++) {
+            color = oldPx[j];
+            r = Color.red(color);
+            g = Color.green(color);
+            b = Color.blue(color);
+            a = Color.alpha(color);
             //此公式将r,g,b运算获得灰度值
             int gray = (int) ((float) r * 0.3 + (float) g * 0.59 + (float) b * 0.11);
 

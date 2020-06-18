@@ -1,15 +1,12 @@
 package com.example.mypainting;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ChooseMode extends AppCompatActivity {
         private TextView info;
@@ -46,7 +43,7 @@ public class ChooseMode extends AppCompatActivity {
        game.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               Intent intent=new Intent(ChooseMode.this,MainActivity.class);
+               Intent intent=new Intent(ChooseMode.this, GameActivity.class);
                startActivity(intent);
            }
        });

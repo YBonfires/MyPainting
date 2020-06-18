@@ -27,13 +27,13 @@ public class Album extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
     private void initPaintings(){
-        Painting zhu=new Painting("猪",R.drawable.zbj);
+        Painting zhu=new Painting(R.drawable.zbj, "猪");
         paintingList.add(zhu);
-        Painting hou=new Painting("猴",R.drawable.swk);
+        Painting hou=new Painting(R.drawable.swk, "猴");
         paintingList.add(hou);
-        Painting ren=new Painting("人",R.drawable.ts);
+        Painting ren=new Painting(R.drawable.ts, "人");
         paintingList.add(ren);
-        Painting xiong=new Painting("熊",R.drawable.xiong);
+        Painting xiong=new Painting(R.drawable.xiong, "熊");
         paintingList.add(xiong);
 
     }

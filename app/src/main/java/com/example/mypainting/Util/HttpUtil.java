@@ -1,59 +1,54 @@
 package com.example.mypainting.Util;
+import android.Manifest;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.example.mypainting.gson.PaintRet;
-import com.example.mypainting.gson.UsrPaint;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.example.mypainting.gson.Painting;
+import com.example.mypainting.gson.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static android.content.ContentValues.TAG;
+import okhttp3.ResponseBody;
 
 public class HttpUtil {
+    private static final String TAG = "UploadPaint";
+    private static final String TAG1 = "RecognizeTest";
 
-//    private static final String TAG = "HttpUtil";
-//    public static void sendOkHttpRequest(String url){
-//        OkHttpClient client = new OkHttpClient();
-//        //String url = "http://10.0.2.2:8080/guessServer/RecognizeServlet";
-//        PaintRet paint;
-//        OkHttpClient client1=new OkHttpClient.Builder()
-//                .build();
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .addHeader("Connection","close")
-//                .build();
-//        try {
-//            Response response = client.newCall(request).execute();
-//            String jsonString = response.body().string();
-//            Log.i(TAG, jsonString);
-//            Gson gson = new Gson();
-//            paint = gson.fromJson(jsonString, new TypeToken<PaintRet>(){}.getType());
-//            System.out.println(paint.getCode());
-//            System.out.println(paint.getMsg());
-//            System.out.println(paint.getData());
-//
-//    } catch ( IOException e) {
-//        Log.i(TAG, "IO异常，尝试重新请求");
-//        e.printStackTrace();
-//    }
-//    }
-
-    public static void savePainttoServer(UsrPaint user, File file) {
-        OkHttpClient okHttpClient = new OkHttpClient();
-        String url="http://10.0.2.2:8080/guessServer/SavaServlet";
+    public static void UploadPaint(User user, final File file) {
+        final String url = "http://10.0.2.2:8080/guessServer/SavaServlet";
+//        String imagePath= file.getAbsolutePath();
+//        final File file1=new File(imagePath);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    User user = new User();
+                    user.setUserid(1);
+                    ResponseBody responseBody = upload(url, file, user);
+                    Log.e(TAG, "成功");
+                    Log.i(TAG, responseBody.string());
+                } catch (IOException e) {
+                    Log.e(TAG, "失败");
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    public static ResponseBody upload(String url, File file, User user) throws IOException {
+        OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", file.getName(),
@@ -64,20 +59,35 @@ public class HttpUtil {
                 .url(url)
                 .post(requestBody)
                 .build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful())
+            throw new IOException("Unexpected code " + response);
+        return response.body();
+    }
+    public static void RecognizePaint(User user, final File file){
+        final String url = "http://10.0.2.2:8080/guessServer/RecognizeServlet";
+        new Thread(new Runnable() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                Log.i(TAG, "onFailure: " + e.getMessage());
-            }
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Log.i(TAG, response.protocol() + " " + response.code() + " " + response.message());
-                Headers headers = response.headers();
-                for (int i = 0; i < headers.size(); i++) {
-                    Log.i(TAG, headers.name(i) + ":" + headers.value(i));
+            public void run() {
+                Painting painting = new Painting();
+                painting.setUrl(file.getAbsolutePath());
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(5, TimeUnit.SECONDS)
+                        .readTimeout(5, TimeUnit.SECONDS)
+                        .writeTimeout(5, TimeUnit.SECONDS)
+                        .build();
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(RequestBody.create( MediaType.parse("application/json; charset=utf-8"),new Gson().toJson(painting)))
+                        .build();
+                try{
+                    Response response = client.newCall(request).execute();
+                    String res = response.body().string();
+                    Log.i(TAG1, res);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                Log.i(TAG, "onResponse: " + response.body().string());
             }
-        });
+        }).start();
     }
 }
