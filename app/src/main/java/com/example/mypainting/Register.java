@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mypainting.gson.Ret;
 import com.example.mypainting.gson.User;
 import com.google.gson.Gson;
 
@@ -57,7 +58,7 @@ public class Register extends AppCompatActivity {
                 final String email = editEmail.getText().toString();
                 final String password = editPassword.getText().toString();
                 final String password2 = editPassword2.getText().toString();
-                String username=editName.getText().toString();
+                final String username=editName.getText().toString();
                 //获取输入在相应控件中的字符串
                 //判断输入框内容
                 if (TextUtils.isEmpty(editEmail.getText()) ) {
@@ -99,20 +100,32 @@ public class Register extends AppCompatActivity {
                             try{
                                 Response response = client.newCall(request).execute();
                                 String res = response.body().string();
-                                Log.i("text", res);
+                                Gson gson = new Gson();
+                                final Ret FromJson = gson.fromJson(res,Ret.class);
+                                int result= FromJson.getCode();
+                                if(result==0){
+                                    Toast.makeText(Register.this, "注册成功", Toast.LENGTH_SHORT).show();
+                                    Intent intent=getIntent();
+                                    intent.putExtra("email",email);
+                                    intent.putExtra("password",password);
+                                    intent.putExtra("username",username);
+                                    //startActivity(intent);
+                                    setResult(0x200,intent);
+                                    finish();
+                                }else if(result==1){
+                                    Toast.makeText(Register.this, "注册失败，该用户已存在，请重新输入", Toast.LENGTH_SHORT).show();
+                                    editEmail.setText("");
+                                    editName.setText("");
+                                    editPassword.setText("");
+                                    editPassword2.setText("");
+                                    return;
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     }).start();
                   //  Intent intent=new Intent(Register.this,login.class);
-                    Intent intent=getIntent();
-                    intent.putExtra("email",email);
-                    intent.putExtra("password",password);
-                    intent.putExtra("username",username);
-                    //startActivity(intent);
-                    setResult(0x200,intent);
-                    finish();
                 }
             }
         });
