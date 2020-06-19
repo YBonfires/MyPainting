@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mypainting.gson.Ret;
 import com.example.mypainting.gson.User;
 import com.google.gson.Gson;
 
@@ -70,9 +71,9 @@ public class login extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email=editEmail.getText().toString();
-                String password=editPassword.getText().toString();
-                String  username=editName.getText().toString();
+                final String email=editEmail.getText().toString();
+                final String password=editPassword.getText().toString();
+                final String  username=editName.getText().toString();
                 if(TextUtils.isEmpty(editEmail.getText())){
                     Toast.makeText(login.this, "请输入邮箱账号", Toast.LENGTH_SHORT).show();
                 }
@@ -105,25 +106,42 @@ public class login extends AppCompatActivity {
                             try{
                                 Response response = client.newCall(request).execute();
                                 String res = response.body().string();//服务器返回的数据
-                                Log.i("TEXT", "HHHHHH");
+                                Gson gson = new Gson();
+                                final Ret FromJson = gson.fromJson(res,Ret.class);
+                                int result= FromJson.getCode();
+                                if(result==0){
+                                    editor=pref.edit();
+                                    if(checkBox.isChecked()){
+                                        editor.putBoolean("remember",true);
+                                        editor.putString("email",email);
+                                        editor.putString("password",password);
+                                        editor.putString("name",username);
+                                    }else{
+                                        editor.clear();
+                                    }
+                                    editor.apply();
+                                    Intent intent = new Intent(login.this, ChooseMode.class);
+                                    startActivity(intent);
+                                }
+                                else if(result==1){
+                                    Toast.makeText(login.this, "该用户不存在，请重新输入", Toast.LENGTH_SHORT).show();
+                                    editName.setText("");
+                                    editPassword.setText("");
+                                    editEmail.setText("");
+                                    return;
+                                }
+                                else if(result==2){
+                                    Toast.makeText(login.this, "密码不正确，请重新输入", Toast.LENGTH_SHORT).show();
+                                    editPassword.setText("");
+                                    return;
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     }).start();
 
-                    editor=pref.edit();
-                    if(checkBox.isChecked()){
-                        editor.putBoolean("remember",true);
-                        editor.putString("email",email);
-                        editor.putString("password",password);
-                        editor.putString("name",username);
-                    }else{
-                        editor.clear();
-                    }
-                    editor.apply();
-                    Intent intent = new Intent(login.this, ChooseMode.class);
-                    startActivity(intent);
+
                 }
             }
         });
