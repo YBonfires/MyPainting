@@ -1,11 +1,14 @@
 package com.example.mypainting;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,10 +37,51 @@ public class login extends AppCompatActivity {
     private EditText editEmail;
     private EditText editPassword,editName;
     private SharedPreferences pref;
-
+    private int result;
+    String password,username,email;
+    private static final int LOAD_OPERATE=0x101;
     private SharedPreferences.Editor editor;
     private CheckBox checkBox;
     private static final String TAG = "LoginTest";
+
+
+    private Handler myHandler=new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == LOAD_OPERATE) {
+                // editEmail.setText(msg.arg1);
+                result = msg.arg1;
+                Log.i("rres", String.valueOf(result));
+
+                if (result == 0) {
+                    editor = pref.edit();
+                    if (checkBox.isChecked()) {
+                        editor.putBoolean("remember", true);
+                        editor.putString("email", email);
+                        editor.putString("password", password);
+                        editor.putString("name", username);
+                    } else {
+                        editor.clear();
+                    }
+                    editor.apply();
+                    Intent intent = new Intent(login.this, ChooseMode.class);
+                    startActivity(intent);
+                } else if (result == 1) {
+                    Toast.makeText(login.this, "该用户不存在，请重新输入", Toast.LENGTH_SHORT).show();
+                    editName.setText("");
+                    editPassword.setText("");
+                    editEmail.setText("");
+                    return;
+                } else if (result == 2) {
+                    Toast.makeText(login.this, "密码不正确，请重新输入", Toast.LENGTH_SHORT).show();
+                    editPassword.setText("");
+                    return;
+                }
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +135,7 @@ public class login extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            String url = "http://10.0.2.2:8080/guessServer/LoginServlet";
+                            String url = "http://49.235.199.207:8080/guessServer/LoginServlet";
                             OkHttpClient client = new OkHttpClient.Builder()//创建一个OkhttpClient实例
                                     //.callTimeout(5, TimeUnit.SECONDS)
                                     .connectTimeout(5, TimeUnit.SECONDS)
@@ -108,40 +152,17 @@ public class login extends AppCompatActivity {
                                 String res = response.body().string();//服务器返回的数据
                                 Gson gson = new Gson();
                                 final Ret FromJson = gson.fromJson(res,Ret.class);
-                                int result= FromJson.getCode();
-                                if(result==0){
-                                    editor=pref.edit();
-                                    if(checkBox.isChecked()){
-                                        editor.putBoolean("remember",true);
-                                        editor.putString("email",email);
-                                        editor.putString("password",password);
-                                        editor.putString("name",username);
-                                    }else{
-                                        editor.clear();
-                                    }
-                                    editor.apply();
-                                    Intent intent = new Intent(login.this, ChooseMode.class);
-                                    startActivity(intent);
-                                }
-                                else if(result==1){
-                                    Toast.makeText(login.this, "该用户不存在，请重新输入", Toast.LENGTH_SHORT).show();
-                                    editName.setText("");
-                                    editPassword.setText("");
-                                    editEmail.setText("");
-                                    return;
-                                }
-                                else if(result==2){
-                                    Toast.makeText(login.this, "密码不正确，请重新输入", Toast.LENGTH_SHORT).show();
-                                    editPassword.setText("");
-                                    return;
-                                }
+                                result= FromJson.getCode();
+                                Message message=Message.obtain();
+                                message.what=LOAD_OPERATE;
+                                message.arg1=result;
+                                myHandler.sendMessage(message);
+                                Log.i("res", String.valueOf(result));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     }).start();
-
-
                 }
             }
         });

@@ -14,11 +14,4 @@
         tools:srcCompat="@tools:sample/avatars"
         android:layout_gravity="center_horizontal"/>
 
-    <TextView
-        android:id="@+id/painting_topic"
-        android:layout_width="wrap_content"
-        android:layout_height="47dp"
-        android:text="TextView"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"/>
 </LinearLayout>

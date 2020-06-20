@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ChooseMode extends AppCompatActivity {
@@ -13,6 +14,7 @@ public class ChooseMode extends AppCompatActivity {
         private Button album;
         //闯关按钮
         private Button game;
+        private ImageView back;
         //练习按钮
         private Button practice;
     @Override
@@ -23,7 +25,14 @@ public class ChooseMode extends AppCompatActivity {
         album=findViewById(R.id.button2);
         game=findViewById(R.id.button3);
         practice=findViewById(R.id.button4);
-
+        back=findViewById(R.id.back2);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ChooseMode.this,login.class);
+                startActivity(intent);
+            }
+        });
         info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
