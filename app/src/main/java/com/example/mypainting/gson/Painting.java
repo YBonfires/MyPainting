@@ -1,7 +1,5 @@
 package com.example.mypainting.gson;
 
-import java.sql.Timestamp;
-
 public class Painting {
 
     private int paintingid;
@@ -10,7 +8,7 @@ public class Painting {
 
     private String url;
 
-    private Timestamp create_time;
+    private String create_time;
 
     public Painting() {
     }
@@ -45,11 +43,11 @@ public class Painting {
         this.url = url;
     }
 
-    public Timestamp getCreate_time() {
+    public String getCreate_time() {
         return create_time;
     }
 
-    public void setCreate_time(Timestamp create_time) {
+    public void setCreate_time(String create_time) {
         this.create_time = create_time;
     }
 

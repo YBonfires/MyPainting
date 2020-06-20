@@ -4,24 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".PracticeActivity">
 
     <zhanglei.com.paintview.PaintView
         android:id="@+id/paintView"
-        android:layout_width="409dp"
-        android:layout_height="732dp"
+        android:layout_width="506dp"
+        android:layout_height="455dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="100dp"
+        android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="#FFFAE4"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_width="276dp"
+        android:layout_height="50dp"
         android:layout_alignParentRight="true"
         android:src="@drawable/logo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,95 +36,40 @@
         android:layout_height="43dp"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="8dp"
-        android:textColor="#207178"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pause" />
-
+        app:layout_constraintTop_toBottomOf="@+id/clear" />
     <TextView
         android:id="@+id/title"
         android:layout_width="267dp"
         android:layout_height="45dp"
-        android:text="关卡信息"
         android:gravity="center"
+        android:text="关卡信息"
         android:textColor="#F58653"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <Button
         android:id="@+id/back"
-        android:layout_width="71dp"
-        android:layout_height="45dp"
-        android:background="@drawable/buttonshape2"
-        android:text="返回"
-        android:textColor="#F58653"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@mipmap/iconfontback"
         app:layout_constraintEnd_toStartOf="@+id/title"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/pause"
-        android:layout_width="71dp"
-        android:layout_height="45dp"
-        android:layout_marginEnd="4dp"
-        android:background="@drawable/buttonshape2"
-        android:text="暂停"
-        android:textColor="#F58653"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@mipmap/pause"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/title"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="57dp"
-        android:layout_height="213dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/back"
-        app:layout_constraintVertical_bias="0.072">
-
-
-        <Button
-            android:id="@+id/btn_select_paint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttonshape2"
-            android:text="画笔"
-            android:textColor="#F58653" />
-
-        <Button
-            android:id="@+id/btn_select_color"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttonshape2"
-            android:text="颜色"
-            android:textColor="#F58653" />
-
-        <Button
-            android:id="@+id/btn_select_eraser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttonshape2"
-            android:text="橡皮"
-            android:textColor="#F58653" />
-
-        <Button
-            android:id="@+id/clear"
-            android:layout_width="match_parent"
-            android:layout_height="62dp"
-            android:background="@drawable/buttonshape2"
-            android:text="清空画板"
-
-            android:textColor="#F58653" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/iv_undo"
@@ -149,12 +96,12 @@
         android:layout_height="75dp"
         android:layout_marginTop="563dp"
         android:layout_marginBottom="42dp"
-        android:background="@drawable/buttonshape2"
+        android:background="@drawable/buttonshape"
         android:gravity="center_horizontal"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         android:text="你画的是... "
-        android:textColor="#F58653"
+        android:textColor="#207178"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -167,9 +114,9 @@
         android:id="@+id/game_start"
         android:layout_width="107dp"
         android:layout_height="42dp"
-        android:background="@drawable/buttonshape2"
+        android:background="@drawable/buttonshape"
         android:text="开始游戏"
-        android:textColor="#F58653"
+        android:textColor="#207178"
         android:textSize="20sp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/resultmsg"
@@ -181,7 +128,7 @@
         android:id="@+id/submit"
         android:layout_width="107dp"
         android:layout_height="42dp"
-        android:background="@drawable/buttonshape2"
+        android:background="@drawable/buttonshape"
         android:text="我画完啦!"
         android:visibility="invisible"
         android:textColor="#207178"
@@ -193,16 +140,67 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/hint"
-        android:layout_width="62dp"
-        android:layout_height="44dp"
+        android:id="@+id/btn_select_eraser"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@mipmap/iconfont_1"
+        app:layout_constraintEnd_toStartOf="@+id/clear"
+        app:layout_constraintHorizontal_bias="0.406"
+        app:layout_constraintStart_toEndOf="@+id/score"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <Button
+        android:id="@+id/clear"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+
         android:layout_marginEnd="8dp"
-        android:text="提示"
-        android:textColor="#F58653"
-        android:background="@drawable/buttonshape2"
-        app:layout_constraintBottom_toBottomOf="@+id/paintView"
+        android:background="@mipmap/iconfontdel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chronometer"
-        app:layout_constraintVertical_bias="0.033" />
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <Button
+        android:id="@+id/btn_select_paint"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@mipmap/iconfont"
+        app:layout_constraintEnd_toStartOf="@+id/btn_select_eraser"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <Button
+        android:id="@+id/btn_select_color"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@mipmap/color"
+        app:layout_constraintEnd_toStartOf="@+id/score"
+        app:layout_constraintHorizontal_bias="0.36"
+        app:layout_constraintStart_toEndOf="@+id/btn_select_paint"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="151dp"
+        android:layout_height="43dp"
+        android:gravity="center"
+        android:text="得分"
+        android:textColor="#207178"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/paintView"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="0.086" />
+
+    <Button
+        android:id="@+id/hint"
+        android:layout_width="56dp"
+        android:layout_height="54dp"
+        android:background="@mipmap/hint"
+        app:layout_constraintBottom_toTopOf="@+id/game_start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/score"
+        app:layout_constraintVertical_bias="0.051" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

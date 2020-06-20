@@ -17,7 +17,7 @@ public class User {
 	
 	private int score;
 	
-	private Timestamp create_time;
+	private String create_time;
 	
 	public User() {
 		super();
@@ -80,11 +80,11 @@ public class User {
 		this.score = score;
 	}
 
-	public Timestamp getCreate_time() {
+	public String getCreate_time() {
 		return create_time;
 	}
 	
-	public void setCreate_time(Timestamp create_time) {
+	public void setCreate_time(String create_time) {
 		this.create_time = create_time;
 	}
 
@@ -96,8 +96,8 @@ public class User {
 		user.setPassword((String )map.get("password"));
 		user.setAvatarurl((String )map.get("avatarurl"));
 		user.setScore((int)map.get("score"));
-		user.setCreate_time((Timestamp)map.get("create_time"));
+		user.setCreate_time((String) map.get("create_time"));
 		return user;
 	}
-	
+
 }

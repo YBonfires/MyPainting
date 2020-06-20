@@ -4,19 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".GameActivity">
 
     <zhanglei.com.paintview.PaintView
         android:id="@+id/paintView"
-        android:layout_width="409dp"
-        android:layout_height="732dp"
-
+        android:layout_width="506dp"
+        android:layout_height="455dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="100dp"
+        android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <ImageView
         android:id="@+id/logo"
@@ -34,18 +36,16 @@
         android:layout_height="43dp"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="8dp"
-        android:textColor="#207178"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pause" />
+        app:layout_constraintTop_toBottomOf="@+id/clear" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="267dp"
         android:layout_height="45dp"
-        android:text="关卡信息"
         android:gravity="center"
+        android:text="关卡信息"
         android:textColor="#F58653"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,11 +54,9 @@
 
     <Button
         android:id="@+id/back"
-        android:layout_width="71dp"
-        android:layout_height="45dp"
-        android:background="@drawable/buttonshape"
-        android:text="返回"
-        android:textColor="#174C4F"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@mipmap/iconfontback"
         app:layout_constraintEnd_toStartOf="@+id/title"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,11 +64,9 @@
 
     <Button
         android:id="@+id/pause"
-        android:layout_width="71dp"
-        android:layout_height="45dp"
-        android:background="@drawable/buttonshape"
-        android:text="暂停"
-        android:textColor="#174C4F"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@mipmap/pause"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/title"
@@ -146,53 +142,57 @@
 
     <Button
         android:id="@+id/btn_select_eraser"
-        android:layout_width="57dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="108dp"
-        android:background="@drawable/buttonshape"
-        android:text="橡皮"
-        android:textColor="#207178"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pause" />
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@mipmap/iconfont_1"
+        app:layout_constraintEnd_toStartOf="@+id/clear"
+        app:layout_constraintHorizontal_bias="0.406"
+        app:layout_constraintStart_toEndOf="@+id/score"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <Button
         android:id="@+id/clear"
-        android:layout_width="57dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/buttonshape"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
 
-        android:text="清空"
-        android:textColor="#207178"
+        android:layout_marginEnd="8dp"
+        android:background="@mipmap/iconfontdel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/btn_select_color"
-        app:layout_constraintTop_toBottomOf="@+id/btn_select_eraser" />
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <Button
         android:id="@+id/btn_select_paint"
-        android:layout_width="57dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="104dp"
-        android:background="@drawable/buttonshape"
-        android:text="画笔"
-        android:textColor="#207178"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@mipmap/iconfont"
         app:layout_constraintEnd_toStartOf="@+id/btn_select_eraser"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/back" />
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <Button
         android:id="@+id/btn_select_color"
-        android:layout_width="57dp"
-        android:layout_height="47dp"
-        android:background="@drawable/buttonshape"
-        android:text="颜色"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@mipmap/color"
+        app:layout_constraintEnd_toStartOf="@+id/score"
+        app:layout_constraintHorizontal_bias="0.36"
+        app:layout_constraintStart_toEndOf="@+id/btn_select_paint"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="151dp"
+        android:layout_height="43dp"
+        android:gravity="center"
+        android:text="得分"
         android:textColor="#207178"
-        app:layout_constraintBottom_toBottomOf="@+id/paintView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_select_paint"
-        app:layout_constraintVertical_bias="0.041" />
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/paintView"
+        app:layout_constraintEnd_toEndOf="@+id/title"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="0.086" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

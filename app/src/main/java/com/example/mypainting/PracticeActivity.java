@@ -17,8 +17,6 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.mypainting.Util.HttpUtil;
 import com.example.mypainting.Util.PaintHelper;
 import com.example.mypainting.gson.User;
 
@@ -39,11 +37,11 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     private ImageView ivRedo;
     private ImageView logo;
     private TextView titlemsg;
-    private  TextView resultmsg;
+    private  TextView resultmsg,score;
     private Button back,pause,clear;
     private Button game_start,submit;
     private Button hint;
-    private User this_user;
+    private User this_user=new User();
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
     private File file,textfile;
@@ -85,6 +83,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
         hint=findViewById(R.id.hint);
         resultmsg = findViewById(R.id.resultmsg);
         submit=findViewById(R.id.submit);
+        score=findViewById(R.id.score);
 
         //实例化计时器
         ch=(Chronometer)findViewById(R.id.chronometer);
@@ -171,7 +170,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                 Log.i(TAG, "查看二值化图片路径：" + "\n"+textfile.getAbsolutePath() + "\n");
 
                 //上传绘图到服务器
-                HttpUtil.UploadPaint(this_user,textfile);
+//                HttpUtil.UploadPaint(this_user,textfile);
             }});
 
                 paintView.setDrawType(DrawTypeEnum.PEN);
