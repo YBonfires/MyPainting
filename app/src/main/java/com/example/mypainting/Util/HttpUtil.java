@@ -36,7 +36,7 @@ public class HttpUtil {
             public void run() {
                 try {
                     User user = new User();
-                    user.setUserid(1);
+                    user.setUserid(user.getUserid());
                     ResponseBody responseBody = upload(url, file, user);
                     Log.e(TAG, "成功");
                     Log.i(TAG, responseBody.string());
@@ -64,13 +64,13 @@ public class HttpUtil {
             throw new IOException("Unexpected code " + response);
         return response.body();
     }
-    public static void RecognizePaint(User user, final File file){
+    public static void RecognizePaint(Painting painting){
         final String url = "http://10.0.2.2:8080/guessServer/RecognizeServlet";
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Painting painting = new Painting();
-                painting.setUrl(file.getAbsolutePath());
+                painting.setUrl(painting.getUrl());
                 OkHttpClient client = new OkHttpClient.Builder()
                         .connectTimeout(5, TimeUnit.SECONDS)
                         .readTimeout(5, TimeUnit.SECONDS)

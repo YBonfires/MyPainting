@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,15 +18,29 @@ import android.widget.Toast;
 
 import com.example.mypainting.Util.HttpUtil;
 import com.example.mypainting.Util.PaintHelper;
+import com.example.mypainting.gson.Painting;
+import com.example.mypainting.gson.Ret;
 import com.example.mypainting.gson.User;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import zhanglei.com.paintview.DrawTypeEnum;
 import zhanglei.com.paintview.PaintView;
 import zhanglei.com.paintview.Util;
+
+import static com.example.mypainting.Util.HttpUtil.upload;
 
 public class GameActivity extends BaseActivity implements IPaintColorListener,IPaintPenListner{
     private static final String TAG="MainActivity";
@@ -44,25 +59,23 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
     private File file;
     private File textfile;
 
-   // private MyHandler myHandler=new MyHandler();
-
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
     private Boolean msg;
 
+    private  MyHandler myHandler=new MyHandler();
     private String errMsg;
     private String topic;
     //当前用户
     private User this_user;
-
-    //dialog
-    //private MyDialog PauseDialog;
 
     //计数器 全局
     private Chronometer ch;
 
     //初始化信号量
     private Semaphore lock=new Semaphore(1);
+    String[] Paints = {"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
+            "hat", "ice cream", "leaf", "scissors", "star", "t-shirt", "pants", "lightning", "tree"};
 
 
     @Override
@@ -71,7 +84,7 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
         //去掉标题栏
        // supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        //实例化
+
         logo = findViewById(R.id.logo);
         paintView = findViewById(R.id.paintView);
         ivRedo = findViewById(R.id.iv_redo);
@@ -87,27 +100,23 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
         ch=(Chronometer)findViewById(R.id.chronometer);
 
         //PauseDialog = new MyDialog(this, R.layout.layout, new int[]{R.id.textView, R.id.button});
-
         selectPenWindow = new SelectPenWindow(this);
         selectPenWindow.setPaintPenListener(this);
 
         selectColorWindow = new SelectColorWindow(this);
         selectColorWindow.setIPaintColorListener(this);
 
-
         //开始游戏
-     game_start.setOnClickListener(new View.OnClickListener() {
+        game_start.setOnClickListener(new View.OnClickListener() {
         //关卡计数器
     public void onClick(View v) {
         game_start.setVisibility(View.GONE);
         submit.setVisibility(View.VISIBLE);
         Log.i(TAG, "点击开始游戏，随机抽取题目...");
-        String[] Paints = {"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
-                "hat", "ice cream", "leaf", "scissors", "star", "t-shirt", "pants", "lightning", "tree"};
         Random random = new Random();
         int i = random.nextInt(19);
         Log.i(TAG, "生成随机题目i为" + i);
-        titlemsg.setText("第x关 请画出" + Paints[i]);
+        titlemsg.setText("请画出" + Paints[i]);
         //设置初始时间
         ch.setBase(SystemClock.elapsedRealtime() + 30000);
         ch.setFormat("%s");
@@ -132,7 +141,6 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
                 ch.stop();
-                //此处应该newThread
                 Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
                 //File file=new File("/sdcard/akai/");
                 file = Util.bitmap2File(GameActivity.this, bitmap);
@@ -146,9 +154,53 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                 Log.i(TAG, "查看二值化图片路径：" + "\n"+textfile.getAbsolutePath() + "\n");
 
                 //上传绘图到服务器
-                HttpUtil.UploadPaint(this_user,file);
-                //识别绘图
-                HttpUtil.RecognizePaint(this_user,textfile);
+                //HttpUtil.UploadPaint(this_user,textfile);
+                final String save_url = "http://10.0.2.2:8080/guessServer/SaveServlet";
+                final String rec_url = "http://10.0.2.2:8080/guessServer/RecognizeServlet";
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ResponseBody responseBody = upload(save_url, textfile, this_user);
+                            Log.i(TAG, "RespnsonseBody"+responseBody.string());
+                        } catch ( IOException e) {
+                            Log.e(TAG, "失败");
+                            e.printStackTrace();
+                        }
+                    }}).start();
+                //识别图片
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        myHandler.textView=resultmsg;
+                        Painting painting = new Painting();
+                        painting.setUrl(textfile.getAbsolutePath());
+                        OkHttpClient client = new OkHttpClient.Builder()
+                                .connectTimeout(5, TimeUnit.SECONDS)
+                                .readTimeout(5, TimeUnit.SECONDS)
+                                .writeTimeout(5, TimeUnit.SECONDS)
+                                .build();
+                        Request request = new Request.Builder()
+                                .url(rec_url)
+                                .post(RequestBody.create( MediaType.parse("application/json; charset=utf-8"),new Gson().toJson(painting)))
+                                .build();
+                        try{
+                            Response response = client.newCall(request).execute();
+                            String res = response.body().string();
+                            Log.i(TAG, "识别返回数据"+res);
+                            //Ret ret=new Gson().fromJson(res,Ret.class);
+                            Ret ret=new Gson().fromJson(res,Ret.class);
+                            User usr=new Gson().fromJson(ret.getData(),User.class);
+                            Message message = Message.obtain();
+                            message.arg1=ret.getCode();
+                            message.obj="你画的是:"+ret.getData();
+                            Log.i(TAG, "message=======================");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
             }});
 
         //启动画笔功能
@@ -277,8 +329,6 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
         paintView.setPaintWidth(drawStrokeEnum.getPenStroke());
         paintView.setRushPaintWidth(drawStrokeEnum.getEraserStroke());
     }
-
-
     //回收资源
     @Override
     protected void onDestroy() {

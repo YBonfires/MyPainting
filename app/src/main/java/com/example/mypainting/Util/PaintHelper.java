@@ -3,6 +3,7 @@ package com.example.mypainting.Util;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,12 +11,14 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AlertDialog;
 
 public class PaintHelper {
+    private static final String TAG ="PaintHelper";
     public static Bitmap convertToBlackWhite(Bitmap bm) {
-
-        int width= 640;
-        int height=480;
-       // int width = bm.getWidth();//原图像宽度
-        //int height = bm.getHeight();//原图高度
+        //int width= 640;
+        //int height=480;
+        int width = bm.getWidth();//原图像宽度
+        Log.i(TAG,"原图像宽度"+width);
+        int height = bm.getHeight();//原图高度
+        Log.i(TAG,"原图像高度"+width);
         int color;//用来存储某个像素点的颜色值
         int r, g, b, a;//红，绿，蓝，透明度
         int digit = 100;//阈值

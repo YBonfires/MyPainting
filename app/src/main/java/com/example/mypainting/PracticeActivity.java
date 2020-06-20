@@ -3,20 +3,33 @@ package com.example.mypainting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.mypainting.Util.HttpUtil;
+import com.example.mypainting.Util.PaintHelper;
+import com.example.mypainting.gson.User;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import zhanglei.com.paintview.DrawTypeEnum;
 import zhanglei.com.paintview.PaintView;
+import zhanglei.com.paintview.Util;
 
 public class PracticeActivity extends AppCompatActivity implements IPaintColorListener,IPaintPenListner {
     private static final String TAG="PracticeActivity";
@@ -28,12 +41,33 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     private TextView titlemsg;
     private  TextView resultmsg;
     private Button back,pause,clear;
-    private Button game_start;
+    private Button game_start,submit;
     private Button hint;
-
+    private User this_user;
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
+    private File file,textfile;
+
     private Chronometer ch;
+    private ArrayList list;
+    private int type;
+    private String[] Paints={"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
+            "hat", "ice cream", "leaf", "scissors", "star", "t-shirt", "pants", "lightning", "tree"};
+    private int[] hintimage={R.drawable.background, R.drawable.background,R.drawable.background,R.drawable.background,
+            R.drawable.background,R.drawable.background,R.drawable.background,R.drawable.background,
+            R.drawable.background,R.drawable.background,R.drawable.background,R.drawable.background,
+            R.drawable.background,R.drawable.background,R.drawable.background,R.drawable.background,
+            R.drawable.background,R.drawable.background,R.drawable.background,R.drawable.background};
+
+    public void initArrayList(){
+        list=new ArrayList();
+        for(int i=0;i<19;i++){
+            HashMap map=new HashMap();
+            map.put("Paints",Paints[i]);
+            map.put("hintimage",hintimage[i]);
+            list.add(map);
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +84,8 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
         titlemsg=findViewById(R.id.title);
         hint=findViewById(R.id.hint);
         resultmsg = findViewById(R.id.resultmsg);
+        submit=findViewById(R.id.submit);
+
         //实例化计时器
         ch=(Chronometer)findViewById(R.id.chronometer);
 
@@ -68,31 +104,76 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
 
             public void onClick(View v) {
 
+                game_start.setVisibility(View.GONE);
+                submit.setVisibility(View.VISIBLE);
                 Log.i(TAG, "点击开始游戏，随机抽取题目...");
-                String[] Paints={"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
-                        "hat", "ice cream", "leaf", "scissors", "star", "t-shirt", "pants", "lightning", "tree"};
                 Random random = new Random();
                 int i = random.nextInt(19);
                 Log.i(TAG, "生成随机题目i为" + i);
+                type=i;
                 titlemsg.setText("练习模式 请画出" + Paints[i]);
                 //设置初始时间
-                ch.setBase(SystemClock.elapsedRealtime() + 30);
+                ch.setBase(SystemClock.elapsedRealtime() + 30000);
                 ch.setFormat("%s");
                 //倒计时实现
                 ch.start();
-                //启动画笔功能
+                ch.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                    @Override
+                    public void onChronometerTick(Chronometer chronometer) {
+                        ch.setText(ch.getText().toString().substring(1));
+                        if (SystemClock.elapsedRealtime()-ch.getBase()>=0)ch.stop();
+                    }
+                });
+
+                //点击提示按钮
                 hint.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        HintDialog mydialog=new HintDialog(PracticeActivity.this,R.layout.activity_hint_dialog);
-
-                        mydialog.show();
-
+                        final Dialog dialog=new Dialog(PracticeActivity.this);
+                        View view = LayoutInflater.from(PracticeActivity.this).inflate(R.layout.activity_hint_dialog, null);
+                        ImageView image=view.findViewById(R.id.hint);
+                        image.setImageResource(hintimage[type]);
+                        Button ok=view.findViewById(R.id.bt_ok);
+                        dialog.setContentView(view);
+                        dialog.show();
+                        ok.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
                     }
                 });
 
 
             }});
+
+        //点击提交按钮
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "提交------------------");
+                ch.stop();
+                Toast toast = Toast.makeText(getApplicationContext(), "正在提交", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                ch.stop();
+                Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
+                //File file=new File("/sdcard/akai/");
+                file = Util.bitmap2File(PracticeActivity.this, bitmap);
+                paintView.clear();
+                Log.i(TAG, "查看file路径：" + "\n"+file.getAbsolutePath() + "\n");
+                //二值化处理
+                // PaintHelper.convertToBlackWhite(bitmap);
+
+                //测试二值化处理是否成功
+                textfile=Util.bitmap2File(PracticeActivity.this, PaintHelper.convertToBlackWhite(bitmap));
+                Log.i(TAG, "查看二值化图片路径：" + "\n"+textfile.getAbsolutePath() + "\n");
+
+                //上传绘图到服务器
+                HttpUtil.UploadPaint(this_user,textfile);
+            }});
+
                 paintView.setDrawType(DrawTypeEnum.PEN);
                 //点击橡皮擦
                 findViewById(R.id.btn_select_eraser).setOnClickListener(new View.OnClickListener() {
