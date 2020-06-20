@@ -17,17 +17,18 @@
         <activity android:name=".PracticeActivity" />
         <activity android:name=".BaseActivity" />
         <activity android:name=".ChooseMode" />
-        <activity android:name=".Register" />
-        <activity android:name=".login" />
+        <activity android:name=".login"/>
+        <activity android:name=".Register"/>
         <activity android:name=".Album" />
-        <activity android:name=".MainActivity" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+        <activity android:name=".GameActivity" >
         </activity>
-        <activity android:name=".MainActivity1"></activity>
+        <activity android:name=".MainActivity1">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

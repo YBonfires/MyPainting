@@ -31,12 +31,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <EditText
+        android:id="@+id/editName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="232dp"
+        android:background="@drawable/editshape"
+        android:ems="10"
+        android:hint="用户名"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/editPassword1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="240dp"
+        android:layout_marginTop="312dp"
         android:background="@drawable/editshape"
         android:ems="10"
         android:hint="密码："
@@ -86,7 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:text="保存账户和密码"
         android:textColor="#5C3838"
         app:layout_constraintStart_toStartOf="@+id/textView"
