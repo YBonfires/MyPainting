@@ -45,7 +45,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
     private File file,textfile;
-
+    private int userId;
     private Chronometer ch;
     private ArrayList list;
     private int type;
@@ -84,6 +84,9 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
         resultmsg = findViewById(R.id.resultmsg);
         submit=findViewById(R.id.submit);
         score=findViewById(R.id.score);
+        Intent intent=getIntent();
+        userId=intent.getIntExtra("userId",0);
+        Log.i("userId", String.valueOf(userId));
 
         //实例化计时器
         ch=(Chronometer)findViewById(R.id.chronometer);

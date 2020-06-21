@@ -1,9 +1,11 @@
 package com.example.mypainting;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.TintTypedArray;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ public class ChooseMode extends AppCompatActivity {
         private ImageView back;
         //练习按钮
         private Button practice;
+        private int userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +29,8 @@ public class ChooseMode extends AppCompatActivity {
         game=findViewById(R.id.button3);
         practice=findViewById(R.id.button4);
         back=findViewById(R.id.back2);
+        Intent intent=getIntent();
+        userId=intent.getIntExtra("userId",0);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,6 +58,7 @@ public class ChooseMode extends AppCompatActivity {
            @Override
            public void onClick(View v) {
                Intent intent=new Intent(ChooseMode.this, GameActivity.class);
+               intent.putExtra("userId",userId);
                startActivity(intent);
            }
        });
@@ -60,6 +66,7 @@ public class ChooseMode extends AppCompatActivity {
            @Override
            public void onClick(View v) {
                Intent intent=new Intent(ChooseMode.this,PracticeActivity.class);
+               intent.putExtra("userId",userId);
                startActivity(intent);
            }
        });
