@@ -10,7 +10,7 @@ public class MyResHandler extends Handler{
     public void handleMessage(Message msg) {
         super.handleMessage(msg);
         int arg1 = msg.arg1;
-        String name = (String)msg.obj;
+        String name =msg.obj.toString();
         if(arg1==0)
             textView.setText(name);
     }

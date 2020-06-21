@@ -13,8 +13,6 @@ public class MyScoreHandler extends Handler {
             String name = (String)msg.obj;
             if(arg1==0)
                 textView.setText(name);
-            if(arg1==1)
-                textView.setText("null");
         }
 }
 

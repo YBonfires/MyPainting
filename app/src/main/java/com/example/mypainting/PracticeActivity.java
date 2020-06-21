@@ -37,7 +37,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     private ImageView ivRedo;
     private ImageView logo;
     private TextView titlemsg;
-    private  TextView resultmsg,score;
+    private  TextView resultmsg;
     private Button back,pause,clear;
     private Button game_start,submit;
     private Button hint;
@@ -51,11 +51,11 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     private int type;
     private String[] Paints={"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
             "hat", "ice cream", "leaf", "scissors", "star", "t-shirt", "pants", "lightning", "tree"};
-    private int[] hintimage={R.drawable.background, R.drawable.background,R.drawable.background,R.drawable.background,
-            R.drawable.background,R.drawable.background,R.drawable.background,R.drawable.background,
-            R.drawable.background,R.drawable.background,R.drawable.background,R.drawable.background,
-            R.drawable.background,R.drawable.background,R.drawable.background,R.drawable.background,
-            R.drawable.background,R.drawable.background,R.drawable.background,R.drawable.background};
+    private int[] hintimage={R.drawable.apple, R.drawable.book,R.drawable.bowtie,R.drawable.candle,
+            R.drawable.cloud,R.drawable.cup,R.drawable.door,R.drawable.envelope,
+            R.drawable.eyeglasses,R.drawable.guitar,R.drawable.hammer,R.drawable.hat,
+            R.drawable.icecream,R.drawable.leaf,R.drawable.scissors,R.drawable.star,
+            R.drawable.tshirt,R.drawable.pants,R.drawable.lightning,R.drawable.tree};
 
     public void initArrayList(){
         list=new ArrayList();
@@ -83,7 +83,6 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
         hint=findViewById(R.id.hint);
         resultmsg = findViewById(R.id.resultmsg);
         submit=findViewById(R.id.submit);
-        score=findViewById(R.id.score);
 
         //实例化计时器
         ch=(Chronometer)findViewById(R.id.chronometer);
