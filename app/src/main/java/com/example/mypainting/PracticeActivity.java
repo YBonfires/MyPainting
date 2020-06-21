@@ -44,6 +44,8 @@ import zhanglei.com.paintview.DrawTypeEnum;
 import zhanglei.com.paintview.PaintView;
 import zhanglei.com.paintview.Util;
 
+import static com.example.mypainting.login.USER_ID;
+
 public class PracticeActivity extends AppCompatActivity implements IPaintColorListener,IPaintPenListner {
     private static final String TAG="PracticeActivity";
 
@@ -59,7 +61,6 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     private Button game_start,submit;
     private Button hint;
     private User this_user=new User();
-    private int userId=login.USER_ID;
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
     private File file,textfile;
@@ -98,7 +99,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_practice);
-        this_user.setUserid(userId);
+        this_user.setUserid(USER_ID);
 //        Intent intent=getIntent();
 //        userId=intent.getIntExtra("userId",0);
         Log.i("TAG","userId"+this_user.getUserid());

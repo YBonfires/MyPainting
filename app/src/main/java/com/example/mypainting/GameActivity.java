@@ -39,6 +39,8 @@ import zhanglei.com.paintview.DrawTypeEnum;
 import zhanglei.com.paintview.PaintView;
 import zhanglei.com.paintview.Util;
 
+import static com.example.mypainting.login.USER_ID;
+
 
 public class GameActivity extends BaseActivity implements IPaintColorListener,IPaintPenListner{
     private static final String TAG="MainActivity";
@@ -72,7 +74,7 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
     private int i=0;
     //当前用户
     private User this_user=new User();
-    private int userId=login.USER_ID;
+
     //计数器 全局
     private Chronometer ch;
     private String[] Paints = {"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
@@ -82,7 +84,7 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
         super.onCreate(savedInstanceState);
 //        Intent intent=getIntent();
 //        userId=intent.getIntExtra("userId",0);
-        this_user.setUserid(userId);
+        this_user.setUserid(USER_ID);
         Log.i(TAG,"this_user_id"+this_user.getUserid());
         //去掉标题栏
         // supportRequestWindowFeature(Window.FEATURE_NO_TITLE);

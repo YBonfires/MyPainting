@@ -32,6 +32,7 @@ public class ChooseMode extends AppCompatActivity {
         back=findViewById(R.id.back2);
         Intent intent=getIntent();
         userId=intent.getIntExtra("userId",0);
+        userId=login.USER_ID;
         Log.i(TAG,"-------ChooseMode---------userId"+userId);
 
         back.setOnClickListener(new View.OnClickListener() {

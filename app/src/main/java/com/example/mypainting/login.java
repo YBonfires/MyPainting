@@ -38,6 +38,7 @@ public class login extends AppCompatActivity {
     private int userId;
     private EditText editEmail;
     private EditText editPassword,editName;
+    public static int USER_ID;
    // private SharedPreferences sharedPreferences;
    // private SharedPreferences.Editor editor;
     private int result;
@@ -150,13 +151,14 @@ public class login extends AppCompatActivity {
                                 Gson gson = new Gson();
                                 final Ret FromJson = gson.fromJson(res,Ret.class);
                                 result= FromJson.getCode();
-                                User user =new Gson().fromJson(FromJson.getData(),User.class);
-                                int id=user.getUserid();
-                                Log.i("userId", String.valueOf(id));
+                                User user =new User();
+                                user =gson.fromJson(FromJson.getData(),User.class);
+                                USER_ID=user.getUserid();
+                                Log.i("userId", String.valueOf(USER_ID));
                                 Message message=Message.obtain();
                                 message.what=LOAD_OPERATE;
                                 message.arg1=result;
-                                message.arg2=id;
+                                message.arg2=USER_ID;
                                 SharedPreferences sharedPreferences =getSharedPreferences("data", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor=sharedPreferences.edit();
                                 if (checkBox.isChecked()) {
