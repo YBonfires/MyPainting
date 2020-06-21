@@ -46,6 +46,8 @@ import zhanglei.com.paintview.Util;
 
 public class PracticeActivity extends AppCompatActivity implements IPaintColorListener,IPaintPenListner {
     private static final String TAG="PracticeActivity";
+
+
     //定义布局元素
     private PaintView paintView;
     private ImageView ivUndo;
@@ -57,13 +59,13 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     private Button game_start,submit;
     private Button hint;
     private User this_user=new User();
+    private int userId;
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
     private File file,textfile;
     private Painting paint;
     private MyHandler myHandler=new MyHandler();
     private MyResHandler myresHandler=new MyResHandler();
-    private MyScoreHandler myScoreHandler=new MyScoreHandler();
 
     private static boolean[] isHandled = {false, false, false, false, false, false, false, false, false, false,false,
             false, false, false, false, false, false, false, false, false};
@@ -96,6 +98,11 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_practice);
+
+        Intent intent=getIntent();
+        userId=intent.getIntExtra("userId",0);
+        Log.i("TAG","userId"+userId);
+        this_user.setUserid(1);
 
         logo = findViewById(R.id.logo);
         paintView = findViewById(R.id.paintView);
@@ -155,6 +162,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                 hint.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        initArrayList();
                         final Dialog dialog=new Dialog(PracticeActivity.this);
                         View view = LayoutInflater.from(PracticeActivity.this).inflate(R.layout.activity_hint_dialog, null);
                         ImageView image=view.findViewById(R.id.hint);
@@ -187,6 +195,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                     paintView.clear();
                     //测试二值化处理是否成功
                     textfile = Util.bitmap2File(PracticeActivity.this, PaintHelper.convertToBlackWhite(bitmap));
+                    Log.i(TAG,"二值化处理图片路径"+textfile.getAbsolutePath());
                     Log.i(TAG, "提前提交");
                     Message message = Message.obtain();
                     message.what = 0;
@@ -335,13 +344,15 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                             @Override
                             public void run() {
                                 try {
+                                    Log.i(TAG,"保存图片时textfile的路径"+textfile.getAbsolutePath());
+                                    Log.i(TAG,"this_user_id"+this_user.getUserid());
                                     myresHandler.textView=resultmsg;
-                                    ResponseBody responseBody =upload(url, textfile, this_user);
+                                    ResponseBody responseBody = upload(url, textfile, this_user);
                                     String res = responseBody.string();
                                     Log.i(TAG, res);
                                     Ret ret = new Gson().fromJson(res, Ret.class);
                                     paint = new Gson().fromJson(ret.getData(), Painting.class);
-                                    Log.i(TAG,"--------- save paint url--------"+paint.getUrl());
+                                    Log.i(TAG," save paint url"+paint.getUrl());
 
                                     OkHttpClient client = new OkHttpClient.Builder()
                                             .connectTimeout(5, TimeUnit.SECONDS)
@@ -361,6 +372,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                                     message.obj ="你画的是"+ret1.getData();
                                     myresHandler.sendMessage(message);
                                     Log.i(TAG, "message-----------识别结果-------"+ret1.getData());
+
                                     Log.i(TAG, "Paints"+Paints[i]);
                                     if(ret1.getData().equals(Paints[i])) {
                                         Log.i(TAG, "通过第" + level + "关");
@@ -390,14 +402,13 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                     break;
                 case 1:
                     Log.i(TAG, "--------下一关-----------");
-                    //resultmsg.setText("你画的是...");
                     Log.i(TAG, "开始倒计时30s");
                     ch.setBase(SystemClock.elapsedRealtime() + 30000);
                     ch.setFormat("%s");
                     ch.start();
                     Random random = new Random();
                     i = random.nextInt(19);
-                    titlemsg.setText("请画出" + Paints[i]);
+                    titlemsg.setText("练习模式 请画出" + Paints[i]);
                     Message message = Message.obtain();
                     message.what = 0;
                     message.arg1 = 1;

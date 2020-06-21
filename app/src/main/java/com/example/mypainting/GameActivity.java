@@ -72,6 +72,7 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
     private int i=0;
     //当前用户
     private User this_user=new User();
+    private int userId;
     //计数器 全局
     private Chronometer ch;
     private String[] Paints = {"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
@@ -79,8 +80,10 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        this_user.setUserid(1);
+        Intent intent=getIntent();
+        userId=intent.getIntExtra("userId",0);
+        this_user.setUserid(userId);
+        Log.i(TAG,"this_user_id"+this_user.getUserid());
         //去掉标题栏
         // supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
@@ -103,7 +106,6 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
 
         selectColorWindow = new SelectColorWindow(this);
         selectColorWindow.setIPaintColorListener(this);
-        this_user.setUserid(1);
         myHandler = new MyHandler();
         //开始游戏
         game_start.setOnClickListener(new View.OnClickListener() {
@@ -297,6 +299,9 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                         isHandled[level] = true;
                         if(msg.arg1==1) {
                             Log.i(TAG, "第 "+timer+" 张画倒计时结束，开始处理");
+                            Toast toast = Toast.makeText(getApplicationContext(), "时间到啦！正在提交", Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
                             Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
                             file = Util.bitmap2File(GameActivity.this, bitmap);
                             paintView.clear();
@@ -357,11 +362,11 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                                         Log.i(TAG, "scoreres"+res);
                                         Ret ret2 = new Gson().fromJson(res2, Ret.class);
                                         User user2=new Gson().fromJson(ret2.getData(),User.class);
+                                        this_user=user2;
                                         Message message1 = Message.obtain();
                                         message1.arg1 = ret2.getCode();
                                         message1.obj = "积分 " + user2.getScore();
                                         Log.i(TAG, "score"+user2.getScore());
-                                        this_user=user2;
                                         myScoreHandler.sendMessage(message1);
                                     } catch (Exception e) {
                                         e.printStackTrace();

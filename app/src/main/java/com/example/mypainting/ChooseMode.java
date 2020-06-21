@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ChooseMode extends AppCompatActivity {
+    private final String TAG=" ChooseMode";
         private TextView info;
         private Button album;
         //闯关按钮
@@ -31,6 +32,8 @@ public class ChooseMode extends AppCompatActivity {
         back=findViewById(R.id.back2);
         Intent intent=getIntent();
         userId=intent.getIntExtra("userId",0);
+        Log.i(TAG,"-------ChooseMode---------userId"+userId);
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
