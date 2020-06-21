@@ -59,7 +59,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     private Button game_start,submit;
     private Button hint;
     private User this_user=new User();
-    private int userId;
+    private int userId=login.USER_ID;
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
     private File file,textfile;
@@ -98,12 +98,10 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_practice);
-
-        Intent intent=getIntent();
-        userId=intent.getIntExtra("userId",0);
-        Log.i("TAG","userId"+userId);
-        this_user.setUserid(1);
-
+        this_user.setUserid(userId);
+//        Intent intent=getIntent();
+//        userId=intent.getIntExtra("userId",0);
+        Log.i("TAG","userId"+this_user.getUserid());
         logo = findViewById(R.id.logo);
         paintView = findViewById(R.id.paintView);
         ivRedo = findViewById(R.id.iv_redo);
@@ -408,6 +406,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                     ch.start();
                     Random random = new Random();
                     i = random.nextInt(19);
+                    type=i;
                     titlemsg.setText("练习模式 请画出" + Paints[i]);
                     Message message = Message.obtain();
                     message.what = 0;
