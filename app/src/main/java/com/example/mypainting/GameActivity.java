@@ -374,9 +374,13 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                                     }
                                     Log.i(TAG, "Paints"+Paints[i]);
                                     if(ret1.getData().equals(Paints[i])) {
+                                        this_user.setScore(this_user.getScore()+10);
+                                        myScoreHandler.textView=score;
+                                        Message message2 = Message.obtain();
+                                        message2.obj = "积分 " + this_user.getScore();
+                                        myScoreHandler.sendMessage(message2);
                                         Log.i(TAG, "通过第" + level + "关");
                                         level++;
-                                        this_user.setScore(this_user.getScore()+10);
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {

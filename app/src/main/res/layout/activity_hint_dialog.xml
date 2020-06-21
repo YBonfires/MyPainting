@@ -20,7 +20,7 @@
     <TextView
         android:id="@+id/title"
         android:layout_width="240dp"
-        android:layout_height="36dp"
+        android:layout_height="45dp"
         android:background="#F5E9BE"
         android:gravity="center"
         android:text="提示"
