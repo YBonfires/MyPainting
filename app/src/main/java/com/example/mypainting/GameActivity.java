@@ -56,7 +56,8 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
     private File textfile;
     private Painting paint;
 
-    private static boolean[] isHandled = {false, false, false, false, false, false, false, false, false, false};
+    private static boolean[] isHandled = {false, false, false, false, false, false, false, false, false, false,false,
+                                          false, false, false, false, false, false, false, false, false};
     private static int level = 0;
     private static int timer = 0;
     private static boolean over = false;
@@ -67,16 +68,19 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
     private MyResHandler myresHandler=new MyResHandler();
     private MyScoreHandler myScoreHandler=new MyScoreHandler();
     private MyHandler myHandler=new MyHandler();
-    private String topic;
+
+    private int i=0;
     //当前用户
     private User this_user=new User();
     //计数器 全局
     private Chronometer ch;
-    String[] Paints = {"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
+    private String[] Paints = {"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
             "hat", "ice cream", "leaf", "scissors", "star", "t-shirt", "pants", "lightning", "tree"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this_user.setUserid(1);
         //去掉标题栏
         // supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
@@ -106,15 +110,22 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
             public void onClick(View v) {
                 game_start.setVisibility(View.GONE);
                 submit.setVisibility(View.VISIBLE);
-                Log.i(TAG, "随机抽取题目...");
-                Random random = new Random();
-                int i = random.nextInt(19);
-                titlemsg.setText("请画出" + Paints[i]);
+
+                Log.i(TAG, "开始倒计时30s");
                 //设置初始时间
                 ch.setBase(SystemClock.elapsedRealtime() + 30000);
                 ch.setFormat("%s");
-                //倒计时实现
                 ch.start();
+                //计时器的处理
+                Message message = Message.obtain();
+                message.what = 0;
+                message.arg1 = 1;
+                myHandler.sendMessageDelayed(message, 30000);
+
+                Random random = new Random();
+                i = random.nextInt(19);
+                titlemsg.setText("请画出" + Paints[i]);
+                //倒计时
                 ch.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
                     @Override
                     public void onChronometerTick(Chronometer chronometer) {
@@ -122,129 +133,28 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                         if (SystemClock.elapsedRealtime() - ch.getBase() >= 0) ch.stop();
                     }
                 });
-                ch.setOnClickListener(new View.OnClickListener() {
+                //点击提交按钮
+                submit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.i(TAG, "开始倒计时30s");
+                        ch.stop();
+                        Toast toast = Toast.makeText(getApplicationContext(), "正在提交", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+                        Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
+                        file = Util.bitmap2File(GameActivity.this, bitmap);
+                        paintView.clear();
+                        //测试二值化处理是否成功
+                        textfile = Util.bitmap2File(GameActivity.this, PaintHelper.convertToBlackWhite(bitmap));
+                        Log.i(TAG, "提前提交");
                         Message message = Message.obtain();
                         message.what = 0;
-                        message.arg1 = 1;
-                        myHandler.sendMessageDelayed(message, 30000-(long)level*1000);
+                        message.arg1 = 0;
+                        myHandler.sendMessage(message);
                     }
                 });
-        //点击提交按钮
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast toast = Toast.makeText(getApplicationContext(), "正在提交", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
-                file = Util.bitmap2File(GameActivity.this, bitmap);
-                paintView.clear();
-                //测试二值化处理是否成功
-                textfile = Util.bitmap2File(GameActivity.this, PaintHelper.convertToBlackWhite(bitmap));
-                Log.i(TAG, "提前提交");
-                Message message = Message.obtain();
-                message.what = 0;
-                message.arg1 = 0;
-                myHandler.sendMessage(message);
-                final String score_url = "http://49.235.199.207:8080/guessServer/ScoreServlet";
-                //上传绘图到服务器
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            myHandler.textView=resultmsg;
-//                            //上传绘图到服务器
-//                            OkHttpClient client = new OkHttpClient();
-//                            RequestBody requestBody = new MultipartBody.Builder()
-//                                    .setType(MultipartBody.FORM)
-//                                    .addFormDataPart("file", textfile.getName(),
-//                                            RequestBody.create(MediaType.parse("multipart/form-data"),textfile))
-//                                    .addFormDataPart("user", (new Gson()).toJson(this_user))
-//                                    .build();
-//                            Request request = new Request.Builder()
-//                                    .url(save_url)
-//                                    .post(requestBody)
-//                                    .build();
-//                            Response response = client.newCall(request).execute();
-//                            if (!response.isSuccessful())
-//                                throw new IOException("Unexpected code " + response);
-//                            String res = response.body().string();
-//                            Log.i(TAG, "----------保存返回数据------Respnsonse---------" + res);
-//                            //Gson gson=new GsonBuilder().setDateFormat("MMM dd, yyyy, hh:mm:ss aa").create();
-//                            Ret ret = new Gson().fromJson(res, Ret.class);
-//                            //保存painting类
-//                            paint = new Gson().fromJson(ret.getData(),Painting.class);
-//                            Log.i(TAG,"--------- save paint url--------"+paint.getUrl());
-//                            nextRound = ret.getCode();
-//                            Log.i(TAG, "--------保存图片------nextRound------"+ret.getCode());
-//                        } catch (IOException e) {
-//                            Log.e(TAG, "失败");
-//                            e.printStackTrace();
-//                        }
-//
-//                        //识别图片
-//                        OkHttpClient client = new OkHttpClient.Builder()
-//                                .connectTimeout(5, TimeUnit.SECONDS)
-//                                .readTimeout(5, TimeUnit.SECONDS)
-//                                .writeTimeout(5, TimeUnit.SECONDS)
-//                                .build();
-//                        Request request = new Request.Builder()
-//                                .url(rec_url)
-//                                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), new Gson().toJson(paint)))
-//                                .build();
-//                        try {
-//                            Response response = client.newCall(request).execute();
-//                            String res = response.body().string();
-//                            Log.i(TAG, "识别返回数据" + res);
-//                            Ret ret = new Gson().fromJson(res, Ret.class);
-//                            Message message = Message.obtain();
-//                            message.arg1 = ret.getCode();
-//                            message.obj =ret.getData();
-//                            myHandler.sendMessage(message);
-//                            Log.i(TAG, "message-----------myHandler.textView----"+myHandler.textView);
-//                            Log.i(TAG, "message-----------识别结果-------"+message.obj);
-//
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                } }).start();
-                //获取用户积分
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        myScoreHandler.textView=score;
-                        OkHttpClient client = new OkHttpClient.Builder()
-                                .connectTimeout(5, TimeUnit.SECONDS)
-                                .readTimeout(5, TimeUnit.SECONDS)
-                                .writeTimeout(5, TimeUnit.SECONDS)
-                                .build();
-                        Request request = new Request.Builder()
-                                .url(score_url)
-                                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),new Gson().toJson(this_user)))
-                                .build();
-                        try{
-                            Response response = client.newCall(request).execute();
-                            String res = response.body().string();
-                            Log.i(TAG, "---------------积分返回-------------res"+res);
-                            Ret ret = new Gson().fromJson(res, Ret.class);
-                            User user=new Gson().fromJson(ret.getData(),User.class);
-                            Message message1 = Message.obtain();
-                            message1.arg1 = ret.getCode();
-                            message1.obj = "积分 " + user.getScore();
-                            Log.i(TAG, "---------------积分返回-------------" +message1.obj);
-                            myScoreHandler.sendMessage(message1);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
             }
         });
-    }
-});
 
         //启动画笔功能
         paintView.setDrawType(DrawTypeEnum.PEN);
@@ -325,6 +235,7 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                         dialog.dismiss();
                         Log.i(TAG,"点击了确定按钮，下一步应该跳转至主菜单");
                         //onDestroy();
+                        over=true;
                         Intent intent=new Intent(GameActivity.this,ChooseMode.class);
                         startActivity(intent);
                     }
@@ -349,6 +260,7 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                         dialog.dismiss();
                         Log.i(TAG,"退出游戏，下一步应该跳转至主菜单");
                         //onDestroy();
+                        over=true;
                         Intent intent=new Intent(GameActivity.this,ChooseMode.class);
                         startActivity(intent);
                     }
@@ -381,25 +293,34 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                     if(over)
                         break;
                     if ((msg.arg1==0&&!isHandled[level]) || (msg.arg1==1&&!isHandled[timer])) {
+                        if(level==20) over=true;
                         isHandled[level] = true;
                         if(msg.arg1==1) {
                             Log.i(TAG, "第 "+timer+" 张画倒计时结束，开始处理");
+                            Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
+                            file = Util.bitmap2File(GameActivity.this, bitmap);
+                            paintView.clear();
+                            //测试二值化处理是否成功
+                            textfile = Util.bitmap2File(GameActivity.this, PaintHelper.convertToBlackWhite(bitmap));
                             timer++;
                         }
                         final String url = "http://49.235.199.207:8080/guessServer/SaveServlet";
                         final String url1 = "http://49.235.199.207:8080/guessServer/RecognizeServlet";
+                        final String score_url = "http://49.235.199.207:8080/guessServer/ScoreServlet";
+                        final String update_url = "http://49.235.199.207:8080/guessServer/UpdateServlet";
+
+
                         new Thread(new Runnable() {
-                            //myresHandler.textView=resultmsg;
                             @Override
                             public void run() {
                                 try {
-                                    User user = new User();
-                                    user.setUserid(1);
-                                    ResponseBody responseBody = upload(url, textfile, user);
+                                    myresHandler.textView=resultmsg;
+                                    ResponseBody responseBody = upload(url, textfile, this_user);
                                     String res = responseBody.string();
                                     Log.i(TAG, res);
                                     Ret ret = new Gson().fromJson(res, Ret.class);
                                     paint = new Gson().fromJson(ret.getData(), Painting.class);
+                                    Log.i(TAG,"--------- save paint url--------"+paint.getUrl());
 
                                     OkHttpClient client = new OkHttpClient.Builder()
                                             .connectTimeout(5, TimeUnit.SECONDS)
@@ -413,12 +334,68 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                                     Response response = client.newCall(request).execute();
                                     String res1 = response.body().string();
                                     Log.i(TAG, res1);
-
                                     Ret ret1 = new Gson().fromJson(res1, Ret.class);
-                                    if(ret1.getData().equals("t-shirt")) {
+                                    Message message = Message.obtain();
+                                    message.arg1 = ret1.getCode();
+                                    message.obj ="你画的是"+ret1.getData();
+                                    myresHandler.sendMessage(message);
+                                    Log.i(TAG, "message-----------识别结果-------"+ret1.getData());
+
+                                    myScoreHandler.textView=score;
+                                    OkHttpClient client1 = new OkHttpClient.Builder()
+                                            .connectTimeout(5, TimeUnit.SECONDS)
+                                            .readTimeout(5, TimeUnit.SECONDS)
+                                            .writeTimeout(5, TimeUnit.SECONDS)
+                                            .build();
+                                    Request request1 = new Request.Builder()
+                                            .url(score_url)
+                                            .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),new Gson().toJson(this_user)))
+                                            .build();
+                                    try{
+                                        Response response1 = client.newCall(request1).execute();
+                                        String res2 = response1.body().string();
+                                        Log.i(TAG, "scoreres"+res);
+                                        Ret ret2 = new Gson().fromJson(res2, Ret.class);
+                                        User user2=new Gson().fromJson(ret2.getData(),User.class);
+                                        Message message1 = Message.obtain();
+                                        message1.arg1 = ret2.getCode();
+                                        message1.obj = "积分 " + user2.getScore();
+                                        Log.i(TAG, "score"+user2.getScore());
+                                        this_user=user2;
+                                        myScoreHandler.sendMessage(message1);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    Log.i(TAG, "Paints"+Paints[i]);
+                                    if(ret1.getData().equals(Paints[i])) {
                                         Log.i(TAG, "通过第" + level + "关");
                                         level++;
-                                        if(level == 10) {
+                                        this_user.setScore(this_user.getScore()+10);
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                OkHttpClient client = new OkHttpClient.Builder()
+                                                        .connectTimeout(5, TimeUnit.SECONDS)
+                                                        .readTimeout(5, TimeUnit.SECONDS)
+                                                        .writeTimeout(5, TimeUnit.SECONDS)
+                                                        .build();
+                                                Request request = new Request.Builder()
+                                                        .url(update_url)
+                                                        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),new Gson().toJson(this_user)))
+                                                        .build();
+                                                try{
+                                                    Response response = client.newCall(request).execute();
+                                                    String res = response.body().string();
+                                                    Log.i(TAG, "scoreres"+res);
+                                                    Ret ret = new Gson().fromJson(res, Ret.class);
+                                                    User user=new Gson().fromJson(ret.getData(),User.class);
+                                                    Log.i(TAG,"after update score"+user.getScore());
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }).start();
+                                        if(level == 20) {
                                             Log.i(TAG, "游戏结束");
                                             over = true;
                                         }
@@ -426,8 +403,9 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                                             myHandler.sendEmptyMessage(1);
                                     }
                                     else {
-                                        Log.i(TAG, "游戏结束");
-                                        over = true;
+                                        Log.i(TAG, "画错了，进入下一关");
+                                        myHandler.sendEmptyMessage(1);
+                                        over = false;
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -441,7 +419,19 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                     }
                     break;
                 case 1:
-                    Log.i(TAG, "进入下一关");
+                    Log.i(TAG, "--------下一关-----------");
+                    //resultmsg.setText("你画的是...");
+                    Log.i(TAG, "开始倒计时30s");
+                    ch.setBase(SystemClock.elapsedRealtime() + 30000);
+                    ch.setFormat("%s");
+                    ch.start();
+                    Random random = new Random();
+                    i = random.nextInt(19);
+                    titlemsg.setText("请画出" + Paints[i]);
+                    Message message = Message.obtain();
+                    message.what = 0;
+                    message.arg1 = 1;
+                    myHandler.sendMessageDelayed(message, 30000);
                     break;
                 default:
                     break;

@@ -1,5 +1,6 @@
 package com.example.mypainting;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +8,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
@@ -18,13 +21,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.mypainting.Util.PaintHelper;
+import com.example.mypainting.gson.Painting;
+import com.example.mypainting.gson.Ret;
 import com.example.mypainting.gson.User;
+import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import zhanglei.com.paintview.DrawTypeEnum;
 import zhanglei.com.paintview.PaintView;
 import zhanglei.com.paintview.Util;
@@ -45,7 +60,18 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
     private SelectPenWindow selectPenWindow;
     private SelectColorWindow selectColorWindow;
     private File file,textfile;
+    private Painting paint;
+    private MyHandler myHandler=new MyHandler();
+    private MyResHandler myresHandler=new MyResHandler();
+    private MyScoreHandler myScoreHandler=new MyScoreHandler();
 
+    private static boolean[] isHandled = {false, false, false, false, false, false, false, false, false, false,false,
+            false, false, false, false, false, false, false, false, false};
+    private static int level = 0;
+    private static int timer = 0;
+    private static boolean over = false;
+
+    private int i=0;
     private Chronometer ch;
     private ArrayList list;
     private int type;
@@ -84,6 +110,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
         resultmsg = findViewById(R.id.resultmsg);
         submit=findViewById(R.id.submit);
 
+
         //实例化计时器
         ch=(Chronometer)findViewById(R.id.chronometer);
 
@@ -99,7 +126,6 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
 //    @Override
 
             //关卡计数器
-
             public void onClick(View v) {
 
                 game_start.setVisibility(View.GONE);
@@ -110,11 +136,13 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                 Log.i(TAG, "生成随机题目i为" + i);
                 type=i;
                 titlemsg.setText("练习模式 请画出" + Paints[i]);
-                //设置初始时间
                 ch.setBase(SystemClock.elapsedRealtime() + 30000);
                 ch.setFormat("%s");
-                //倒计时实现
                 ch.start();
+                Message message = Message.obtain();
+                message.what = 0;
+                message.arg1 = 1;
+                myHandler.sendMessageDelayed(message, 30000);
                 ch.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
                     @Override
                     public void onChronometerTick(Chronometer chronometer) {
@@ -150,27 +178,22 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "提交------------------");
-                ch.stop();
-                Toast toast = Toast.makeText(getApplicationContext(), "正在提交", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                ch.stop();
-                Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
-                //File file=new File("/sdcard/akai/");
-                file = Util.bitmap2File(PracticeActivity.this, bitmap);
-                paintView.clear();
-                Log.i(TAG, "查看file路径：" + "\n"+file.getAbsolutePath() + "\n");
-                //二值化处理
-                // PaintHelper.convertToBlackWhite(bitmap);
-
-                //测试二值化处理是否成功
-                textfile=Util.bitmap2File(PracticeActivity.this, PaintHelper.convertToBlackWhite(bitmap));
-                Log.i(TAG, "查看二值化图片路径：" + "\n"+textfile.getAbsolutePath() + "\n");
-
-                //上传绘图到服务器
-//                HttpUtil.UploadPaint(this_user,textfile);
-            }});
+                    ch.stop();
+                    Toast toast = Toast.makeText(getApplicationContext(), "正在提交", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
+                    file = Util.bitmap2File(PracticeActivity.this, bitmap);
+                    paintView.clear();
+                    //测试二值化处理是否成功
+                    textfile = Util.bitmap2File(PracticeActivity.this, PaintHelper.convertToBlackWhite(bitmap));
+                    Log.i(TAG, "提前提交");
+                    Message message = Message.obtain();
+                    message.what = 0;
+                    message.arg1 = 0;
+                    myHandler.sendMessage(message);
+                }
+            });
 
                 paintView.setDrawType(DrawTypeEnum.PEN);
                 //点击橡皮擦
@@ -243,6 +266,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                     @Override
                     public void onClick(View v) {
                                // onDestroy();
+                                over=true;
                                 Intent intent=new Intent(PracticeActivity.this,ChooseMode.class);
                                 startActivity(intent);
                     }
@@ -259,6 +283,7 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                                 dialog.dismiss();
                                 Log.i(TAG,"退出游戏，下一步应该跳转至主菜单");
                                // onDestroy();
+                                over=true;
                                 Intent intent=new Intent(PracticeActivity.this,ChooseMode.class);
                                 startActivity(intent);
                             }
@@ -283,8 +308,123 @@ public class PracticeActivity extends AppCompatActivity implements IPaintColorLi
                 paintView.setPaintWidth(drawStrokeEnum.getPenStroke());
                 paintView.setRushPaintWidth(drawStrokeEnum.getEraserStroke());
             }
+    private class MyHandler extends Handler {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    if(over)
+                        break;
+                    if ((msg.arg1==0&&!isHandled[level]) || (msg.arg1==1&&!isHandled[timer])) {
+                        if(level==20) over=true;
+                        isHandled[level] = true;
+                        if(msg.arg1==1) {
+                            Log.i(TAG, "第 "+timer+" 张画倒计时结束，开始处理");
+                            Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_8888);
+                            file = Util.bitmap2File(PracticeActivity.this, bitmap);
+                            paintView.clear();
+                            //测试二值化处理是否成功
+                            textfile = Util.bitmap2File(PracticeActivity.this, PaintHelper.convertToBlackWhite(bitmap));
+                            timer++;
+                        }
+                        final String url = "http://49.235.199.207:8080/guessServer/SaveServlet";
+                        final String url1 = "http://49.235.199.207:8080/guessServer/RecognizeServlet";
 
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    myresHandler.textView=resultmsg;
+                                    ResponseBody responseBody =upload(url, textfile, this_user);
+                                    String res = responseBody.string();
+                                    Log.i(TAG, res);
+                                    Ret ret = new Gson().fromJson(res, Ret.class);
+                                    paint = new Gson().fromJson(ret.getData(), Painting.class);
+                                    Log.i(TAG,"--------- save paint url--------"+paint.getUrl());
 
+                                    OkHttpClient client = new OkHttpClient.Builder()
+                                            .connectTimeout(5, TimeUnit.SECONDS)
+                                            .readTimeout(5, TimeUnit.SECONDS)
+                                            .writeTimeout(5, TimeUnit.SECONDS)
+                                            .build();
+                                    Request request = new Request.Builder()
+                                            .url(url1)
+                                            .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),new Gson().toJson(paint)))
+                                            .build();
+                                    Response response = client.newCall(request).execute();
+                                    String res1 = response.body().string();
+                                    Log.i(TAG, res1);
+                                    Ret ret1 = new Gson().fromJson(res1, Ret.class);
+                                    Message message = Message.obtain();
+                                    message.arg1 = ret1.getCode();
+                                    message.obj ="你画的是"+ret1.getData();
+                                    myresHandler.sendMessage(message);
+                                    Log.i(TAG, "message-----------识别结果-------"+ret1.getData());
+                                    Log.i(TAG, "Paints"+Paints[i]);
+                                    if(ret1.getData().equals(Paints[i])) {
+                                        Log.i(TAG, "通过第" + level + "关");
+                                        level++;
+                                        if(level == 20) {
+                                            Log.i(TAG, "游戏结束");
+                                            over = true;
+                                        }
+                                        else
+                                            myHandler.sendEmptyMessage(1);
+                                    }
+                                    else {
+                                        Log.i(TAG, "画错了，进入下一关");
+                                        myHandler.sendEmptyMessage(1);
+                                        over = false;
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                    }
+                    else {
+                        Log.i(TAG, "第 "+timer+" 张画倒计时结束，检测已处理，跳过处理");
+                        timer++;
+                    }
+                    break;
+                case 1:
+                    Log.i(TAG, "--------下一关-----------");
+                    //resultmsg.setText("你画的是...");
+                    Log.i(TAG, "开始倒计时30s");
+                    ch.setBase(SystemClock.elapsedRealtime() + 30000);
+                    ch.setFormat("%s");
+                    ch.start();
+                    Random random = new Random();
+                    i = random.nextInt(19);
+                    titlemsg.setText("请画出" + Paints[i]);
+                    Message message = Message.obtain();
+                    message.what = 0;
+                    message.arg1 = 1;
+                    myHandler.sendMessageDelayed(message, 30000);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    public ResponseBody upload(String url, File file, User user) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.getName(),
+                        RequestBody.create(MediaType.parse("multipart/form-data"),file))
+                .addFormDataPart("user", (new Gson()).toJson(user))
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful())
+            throw new IOException("Unexpected code " + response);
+        return response.body();
+    }
             //回收资源
             @Override
             protected void onDestroy() {

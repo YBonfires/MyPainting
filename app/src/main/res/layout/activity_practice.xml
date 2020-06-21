@@ -32,11 +32,13 @@
 
     <Chronometer
         android:id="@+id/chronometer"
-        android:layout_width="62dp"
+        android:layout_width="81dp"
         android:layout_height="43dp"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
         android:layout_marginTop="32dp"
+        android:textColor="#207178"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/clear" />
     <TextView
@@ -96,7 +98,7 @@
         android:layout_height="75dp"
         android:layout_marginTop="563dp"
         android:layout_marginBottom="42dp"
-        android:background="@drawable/buttonshape"
+        android:background="@drawable/buttonshape2"
         android:gravity="center_horizontal"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
@@ -114,7 +116,7 @@
         android:id="@+id/game_start"
         android:layout_width="107dp"
         android:layout_height="42dp"
-        android:background="@drawable/buttonshape"
+        android:background="@drawable/buttonshape2"
         android:text="开始游戏"
         android:textColor="#207178"
         android:textSize="20sp"
@@ -128,7 +130,7 @@
         android:id="@+id/submit"
         android:layout_width="107dp"
         android:layout_height="42dp"
-        android:background="@drawable/buttonshape"
+        android:background="@drawable/buttonshape2"
         android:text="我画完啦!"
         android:visibility="invisible"
         android:textColor="#207178"
@@ -145,8 +147,6 @@
         android:layout_height="45dp"
         android:background="@mipmap/iconfont_1"
         app:layout_constraintEnd_toStartOf="@+id/clear"
-        app:layout_constraintHorizontal_bias="0.406"
-        app:layout_constraintStart_toEndOf="@+id/score"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <Button
@@ -174,24 +174,8 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@mipmap/color"
-        app:layout_constraintEnd_toStartOf="@+id/score"
-        app:layout_constraintHorizontal_bias="0.36"
         app:layout_constraintStart_toEndOf="@+id/btn_select_paint"
         app:layout_constraintTop_toBottomOf="@+id/title" />
-
-    <TextView
-        android:id="@+id/score"
-        android:layout_width="151dp"
-        android:layout_height="43dp"
-        android:gravity="center"
-        android:text="得分"
-        android:textColor="#207178"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/paintView"
-        app:layout_constraintEnd_toEndOf="@+id/title"
-        app:layout_constraintStart_toStartOf="@+id/title"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        app:layout_constraintVertical_bias="0.086" />
 
     <Button
         android:id="@+id/hint"
@@ -200,7 +184,7 @@
         android:background="@mipmap/hint"
         app:layout_constraintBottom_toTopOf="@+id/game_start"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/score"
-        app:layout_constraintVertical_bias="0.051" />
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="0.144" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
