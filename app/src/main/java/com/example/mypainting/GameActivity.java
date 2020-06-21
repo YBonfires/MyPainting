@@ -72,7 +72,7 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
     private int i=0;
     //当前用户
     private User this_user=new User();
-    private int userId;
+    private int userId=login.USER_ID;
     //计数器 全局
     private Chronometer ch;
     private String[] Paints = {"apple", "book", "bowtie", "candle", "cloud", "cup", "door", "envelope", "eyeglasses", "guitar", "hammer",
@@ -80,8 +80,8 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent=getIntent();
-        userId=intent.getIntExtra("userId",0);
+//        Intent intent=getIntent();
+//        userId=intent.getIntExtra("userId",0);
         this_user.setUserid(userId);
         Log.i(TAG,"this_user_id"+this_user.getUserid());
         //去掉标题栏
@@ -345,7 +345,6 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
                                     message.obj ="你画的是"+ret1.getData();
                                     myresHandler.sendMessage(message);
                                     Log.i(TAG, "message-----------识别结果-------"+ret1.getData());
-
                                     myScoreHandler.textView=score;
                                     OkHttpClient client1 = new OkHttpClient.Builder()
                                             .connectTimeout(5, TimeUnit.SECONDS)
