@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.mypainting.Util.PaintHelper;
-import com.example.mypainting.gson.MyHandler;
 import com.example.mypainting.gson.Painting;
 import com.example.mypainting.gson.Ret;
 import com.example.mypainting.gson.User;
