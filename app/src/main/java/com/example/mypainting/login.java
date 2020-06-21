@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -36,11 +37,11 @@ public class login extends AppCompatActivity {
     private Button button;
     private EditText editEmail;
     private EditText editPassword,editName;
-    private SharedPreferences pref;
+   // private SharedPreferences sharedPreferences;
+   // private SharedPreferences.Editor editor;
     private int result;
     String password,username,email;
     private static final int LOAD_OPERATE=0x101;
-    private SharedPreferences.Editor editor;
     private CheckBox checkBox;
     private static final String TAG = "LoginTest";
 
@@ -53,18 +54,7 @@ public class login extends AppCompatActivity {
                 // editEmail.setText(msg.arg1);
                 result = msg.arg1;
                 Log.i("rres", String.valueOf(result));
-
                 if (result == 0) {
-                    editor = pref.edit();
-                    if (checkBox.isChecked()) {
-                        editor.putBoolean("remember", true);
-                        editor.putString("email", email);
-                        editor.putString("password", password);
-                        editor.putString("name", username);
-                    } else {
-                        editor.clear();
-                    }
-                    editor.apply();
                     Intent intent = new Intent(login.this, ChooseMode.class);
                     startActivity(intent);
                 } else if (result == 1) {
@@ -91,9 +81,19 @@ public class login extends AppCompatActivity {
         editPassword=findViewById(R.id.editPassword1);
         editEmail=findViewById(R.id.editEmail1);
         editName=findViewById(R.id.editName);
-        pref= PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPreferences =getSharedPreferences("data", Context.MODE_PRIVATE);
         checkBox=(CheckBox) findViewById(R.id.checkBox);
-        boolean isRemember=pref.getBoolean("remember",false);
+        boolean isRemember=sharedPreferences.getBoolean("remember",false);
+        if(isRemember){
+             email=sharedPreferences.getString("email","0");
+             password=sharedPreferences.getString("password","0");
+              username=sharedPreferences.getString("name","0");
+            editEmail.setSaveEnabled(false);
+            editEmail.setText(email);
+            editPassword.setText(password);
+            editName.setText(username);
+            checkBox.setChecked(true);
+        }
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,16 +101,7 @@ public class login extends AppCompatActivity {
                 startActivityForResult(intent,0x101);
             }
         });
-        if(isRemember){
-            String email=pref.getString("email","");
-            String password=pref.getString("password","");
-            String name=pref.getString("name","");
-            editEmail.setSaveEnabled(false);
-            editEmail.setText(email);
-            editPassword.setText(password);
-            editName.setText(name);
-            checkBox.setChecked(true);
-        }
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +147,21 @@ public class login extends AppCompatActivity {
                                 Message message=Message.obtain();
                                 message.what=LOAD_OPERATE;
                                 message.arg1=result;
+                                SharedPreferences sharedPreferences =getSharedPreferences("data", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor=sharedPreferences.edit();
+                                if (checkBox.isChecked()) {
+                                    editor.clear();
+                                    editor.putBoolean("remember", true);
+                                    editor.putString("email", email);
+                                    editor.putString("password", password);
+                                    editor.putString("name", username);
+                                    if(sharedPreferences.contains("email")) {
+                                        Log.i("ttext", email);
+                                    }
+                                } else {
+                                    editor.clear();
+                                }
+                                editor.apply();
                                 myHandler.sendMessage(message);
                                 Log.i("res", String.valueOf(result));
                             } catch (Exception e) {

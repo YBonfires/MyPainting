@@ -132,18 +132,35 @@ public class Album<list> extends AppCompatActivity {
        @SuppressLint("DefaultLocale")
    private boolean checkIsImageFile(String fName) {
           boolean isImageFile = false;
+          String file = fName.substring(fName.lastIndexOf("/") + 1, fName.length());
+          String fileName=getFileNameNoEx(file);
+          String numOfFile= fileName.substring(fileName.length()-1,fileName.length());
+         int num= Integer.valueOf(numOfFile).intValue();
+       // Log.i("num",numOfFile);
              // 获取扩展名
         String FileEnd = fName.substring(fName.lastIndexOf(".") + 1,
                 fName.length()).toLowerCase();
-         if ( FileEnd.equals("png")  ) {
+         if ( FileEnd.equals("png")&&(num%2!=0) ) {
                    isImageFile = true;
+             Log.i("num", String.valueOf(num));
                } else {
              isImageFile = false;
                  }
           return isImageFile;
         }
+    public static String getFileNameNoEx(String filename) {
+        if ((filename != null) && (filename.length() > 0)) {
+            int dot = filename.lastIndexOf('.');
+            if ((dot >-1) && (dot < (filename.length()))) {
+                return filename.substring(0, dot);
+            }
+        }
+        return filename;
+    }
 
-   }
+
+
+}
 
 
 

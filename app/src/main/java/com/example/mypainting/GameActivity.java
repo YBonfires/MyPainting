@@ -1,7 +1,5 @@
 package com.example.mypainting;
 
-import androidx.appcompat.app.AlertDialog;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -15,17 +13,17 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+
 import com.example.mypainting.Util.PaintHelper;
-import com.example.mypainting.gson.MyHandler;
 import com.example.mypainting.gson.Painting;
 import com.example.mypainting.gson.Ret;
 import com.example.mypainting.gson.User;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
