@@ -35,6 +35,7 @@ import okhttp3.Response;
 public class login extends AppCompatActivity {
     private TextView textView;
     private Button button;
+    private int userId;
     private EditText editEmail;
     private EditText editPassword,editName;
    // private SharedPreferences sharedPreferences;
@@ -53,10 +54,13 @@ public class login extends AppCompatActivity {
             if (msg.what == LOAD_OPERATE) {
                 // editEmail.setText(msg.arg1);
                 result = msg.arg1;
+                userId=msg.arg2;
                 Log.i("rres", String.valueOf(result));
                 if (result == 0) {
                     Intent intent = new Intent(login.this, ChooseMode.class);
+                    intent.putExtra("userId",userId);
                     startActivity(intent);
+
                 } else if (result == 1) {
                     Toast.makeText(login.this, "该用户不存在，请重新输入", Toast.LENGTH_SHORT).show();
                     editName.setText("");
@@ -68,6 +72,8 @@ public class login extends AppCompatActivity {
                     editPassword.setText("");
                     return;
                 }
+
+
             }
         }
     };
@@ -144,9 +150,13 @@ public class login extends AppCompatActivity {
                                 Gson gson = new Gson();
                                 final Ret FromJson = gson.fromJson(res,Ret.class);
                                 result= FromJson.getCode();
+                                User user =new Gson().fromJson(FromJson.getData(),User.class);
+                                int id=user.getUserid();
+                                Log.i("userId", String.valueOf(id));
                                 Message message=Message.obtain();
                                 message.what=LOAD_OPERATE;
                                 message.arg1=result;
+                                message.arg2=id;
                                 SharedPreferences sharedPreferences =getSharedPreferences("data", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor=sharedPreferences.edit();
                                 if (checkBox.isChecked()) {

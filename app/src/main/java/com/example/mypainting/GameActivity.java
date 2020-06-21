@@ -63,6 +63,7 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
     private MyScoreHandler myScoreHandler=new MyScoreHandler();
     private String errMsg;
     private String topic;
+    private int userId;
     //当前用户
     private User this_user=new User();
     //计数器 全局
@@ -94,6 +95,9 @@ public class GameActivity extends BaseActivity implements IPaintColorListener,IP
 
         selectColorWindow = new SelectColorWindow(this);
         selectColorWindow.setIPaintColorListener(this);
+        Intent intent=getIntent();
+        userId=intent.getIntExtra("userId",0);
+        Log.i("userId", String.valueOf(userId));
         this_user.setUserid(1);
         //开始游戏
         game_start.setOnClickListener(new View.OnClickListener() {
